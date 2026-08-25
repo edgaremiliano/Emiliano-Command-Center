@@ -3,271 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0E2238">
+<meta name="theme-color" content="#0D0E10">
 <meta name="description" content="Horario semanal de Emiliano González López — ESCOM-IPN y Cinemex">
-<title>Horario Semanal — Emiliano González López</title>
+<title>Horario — Emiliano González López</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
 
   :root{
-    --bg: #0E2238;
-    --bg-deep: #0A1B2C;
-    --grid-line: rgba(255,255,255,0.055);
-    --grid-line-strong: rgba(255,255,255,0.11);
-    --paper: #ECE6D6;
-    --paper-2: #E2DBC8;
-    --ink: #16222F;
-    --amber: #E0A038;
-    --school: #3FAFA0;
-    --school-deep: #276F65;
-    --work: #C9622A;
-    --work-deep: #8C4118;
-    --free: #7A6FB0;
-    --free-deep: #4F4778;
-    --white: #F4F1E6;
-    --danger: #B3492F;
+    --bg: #0D0E10;
+    --text: #EDECE8;
+    --text-dim: rgba(237,236,232,0.62);
+    --text-faint: rgba(237,236,232,0.36);
+    --line: rgba(237,236,232,0.13);
+    --line-soft: rgba(237,236,232,0.07);
+    --accent: #C9A15A;
+    --school: #4FA98F;
+    --work: #C97A43;
+    --free: #8B7FBF;
+    --danger: #C9614A;
   }
 
-  *{ box-sizing: border-box; }
+  *{ box-sizing:border-box; }
 
   body{
     margin:0;
-    background:
-      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/34px 34px,
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/34px 34px,
-      radial-gradient(ellipse at top left, #143352 0%, var(--bg) 45%, var(--bg-deep) 100%);
-    font-family: 'IBM Plex Sans', sans-serif;
-    color: var(--white);
-    padding: 28px 16px 60px;
-    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-size: 15px;
+    line-height: 1.5;
   }
 
-  .sheet{ max-width: 980px; margin: 0 auto; }
+  .wrap{ max-width: 1080px; margin:0 auto; padding: 64px 32px 100px; }
 
-  .titleblock{
-    border: 1.5px solid var(--grid-line-strong);
-    background: rgba(10,27,44,0.55);
-    display: grid;
-    grid-template-columns: 1.6fr repeat(4, 1fr);
-    margin-bottom: 16px;
+  /* ---------------- Header ---------------- */
+  .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing:.14em;
+    text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px;
   }
-  .titleblock .cell{ padding: 10px 14px; border-left: 1px solid var(--grid-line-strong); }
-  .titleblock .cell:first-child{ border-left:none; }
-  .titleblock .label{
-    font-family:'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--amber); margin-bottom: 4px;
+  h1{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size: 30px;
+    letter-spacing:-.01em; margin: 0 0 8px;
   }
-  .titleblock .value{ font-family:'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; }
-  .titleblock .proyecto .value{ font-size: 19px; }
+  .meta-line{ font-size: 14px; color: var(--text-dim); }
+  .meta-line span{ color: var(--text); }
+
+  .status-line{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap: 8px 24px;
+    margin: 32px 0 40px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace; font-size: 13px;
+  }
+  .status-left{ display:flex; align-items:center; gap: 10px; }
+  .dot{ width:7px; height:7px; border-radius:50%; background: var(--text-faint); flex-shrink:0; }
+  .dot.live{ background:#5FCB8C; }
+  .status-detail{ color: var(--text-dim); }
+  .status-detail b{ color: var(--text); font-weight:500; }
+  .status-stats{ color: var(--text-faint); }
+  .status-stats b{ color: var(--text-dim); font-weight:500; }
 
   .banner{
-    display:none;
-    border: 1.5px solid var(--amber);
-    background: rgba(224,160,56,0.12);
-    color: var(--white);
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 12px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    line-height:1.5;
+    display:none; border:1px solid var(--line); background: rgba(255,255,255,0.03);
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--text-dim);
+    padding: 12px 16px; margin: -20px 0 32px; line-height:1.6;
   }
   .banner.show{ display:block; }
-  .banner a{ color: var(--amber); }
-  .banner b{ color: var(--amber); }
+  .banner b{ color: var(--accent); }
 
-  .legend{
-    display:flex; gap:22px; flex-wrap:wrap; margin: 0 0 22px 2px;
-    font-family:'IBM Plex Mono', monospace; font-size: 12px;
+  .conflict-note{
+    display:none; border-left: 2px solid var(--danger); background: rgba(201,97,74,0.08);
+    font-size: 13px; color: var(--text-dim); padding: 10px 14px; margin: -20px 0 32px;
   }
-  .legend span{ display:inline-flex; align-items:center; gap:7px; opacity:.9; }
-  .swatch{ width:12px; height:12px; border-radius:2px; display:inline-block; }
+  .conflict-note.show{ display:block; }
+  .conflict-note b{ color: var(--danger); }
 
-  .grid-wrap{
-    border: 1.5px solid var(--grid-line-strong);
-    background: rgba(10,27,44,0.35);
-    overflow-x: auto;
+  /* ---------------- Section headers ---------------- */
+  .section{ margin-bottom: 64px; }
+  .section-top{
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    margin-bottom: 20px;
   }
-  .grid{ display: grid; grid-template-columns: 64px repeat(5, 1fr); min-width: 720px; }
-  .grid .head{
-    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size: 13px; letter-spacing:.04em;
-    text-transform: uppercase; text-align:center; padding: 10px 4px;
-    border-bottom: 1.5px solid var(--grid-line-strong); border-left: 1px solid var(--grid-line); color: var(--amber);
+  .section-title{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:18px;
   }
-  .grid .head:first-child{ border-left:none; }
-  .time-col{ border-bottom: 1.5px solid var(--grid-line-strong); }
-  .hour{
-    height: 30px; font-family:'IBM Plex Mono', monospace; font-size: 10px;
-    color: rgba(244,241,230,0.35); text-align:right; padding-right: 6px;
-    border-top: 1px solid var(--grid-line); position:relative; top:-6px;
+  .legend{ display:flex; gap:16px; }
+  .legend span{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--text-faint);
+    display:inline-flex; align-items:center; gap:6px;
   }
-  .day-col{ position:relative; border-left: 1px solid var(--grid-line); }
+  .legend i{ width:8px; height:8px; display:inline-block; border-radius:2px; }
+
+  /* ---------------- Calendar ---------------- */
+  .cal-grid{ display:grid; grid-template-columns: 56px repeat(5, 1fr); border-top: 1px solid var(--line); }
+  .cal-grid .day-head{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px;
+    text-align:left; padding: 10px 0 10px 10px; border-bottom:1px solid var(--line);
+    border-left:1px solid var(--line-soft); color: var(--text-dim);
+  }
+  .cal-grid .day-head.today{ color: var(--accent); }
+  .cal-grid .day-head span{
+    font-family:'IBM Plex Mono', monospace; font-weight:400; font-size:9.5px;
+    color: var(--accent); margin-left:6px;
+  }
+  .cal-grid .day-head:first-child{ border-left:none; }
+  .time-col{ border-bottom:1px solid var(--line); }
+  .hour-label{
+    height: 52px; font-family:'IBM Plex Mono', monospace; font-size:10px;
+    color: var(--text-faint); position:relative; top:-6px;
+    border-top:1px solid var(--line-soft);
+  }
+  .day-col{ position:relative; border-left:1px solid var(--line-soft); }
+  .day-col.today{ background: rgba(201,161,90,0.025); }
+
   .block{
-    position:absolute; left:3px; right:3px; border-radius:3px; padding:5px 7px;
-    font-family:'IBM Plex Mono', monospace; overflow:hidden; border:1px solid rgba(255,255,255,0.18);
+    position:absolute; padding: 5px 8px; overflow:hidden;
+    background: rgba(255,255,255,0.03); border-left: 2.5px solid var(--school);
+    font-size: 11.5px;
   }
-  .block .t{ font-size:10px; opacity:.85; margin-bottom:1px; }
-  .block .n{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11.5px; line-height:1.15; }
-  .block .r{ font-size:9.5px; opacity:.75; margin-top:2px; }
-  .b-school{ background: linear-gradient(160deg, var(--school), var(--school-deep)); color:#EAFBF8; }
-  .b-work{ background: linear-gradient(160deg, var(--work), var(--work-deep)); color:#FDEEE2; }
-  .b-free{ background: linear-gradient(160deg, var(--free), var(--free-deep)); color:#EFEBFB; }
+  .block.type-work{ border-left-color: var(--work); }
+  .block.type-free{ border-left-color: var(--free); background: transparent; }
+  .block.conflict{ border-left-color: var(--danger); background: rgba(201,97,74,0.07); }
+  .block .t{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; color: var(--text-faint); }
+  .block .n{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:11.5px; color: var(--text); line-height:1.2; margin-top:1px; }
+  .block .r{ font-size:9.5px; color: var(--text-faint); margin-top:2px; }
+  .block.type-free .n{ color: var(--text-dim); font-weight:500; }
 
-  .section-head{
-    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size: 15px;
-    text-transform: uppercase; letter-spacing:.06em; color: var(--amber);
-    margin: 30px 0 12px 2px; display:flex; align-items:center; gap:10px;
+  /* ---------------- Notes ---------------- */
+  .notes-list{ border-top: 1px solid var(--line); }
+  .note-row{
+    display:grid; grid-template-columns: 230px 1fr; gap: 28px;
+    padding: 22px 0; border-bottom: 1px solid var(--line-soft);
   }
-  .section-head::after{ content:''; flex:1; height:1px; background: var(--grid-line-strong); }
+  .note-row-head{ display:flex; align-items:flex-start; gap:9px; padding-top:2px; }
+  .note-row-head i{ width:8px; height:8px; border-radius:2px; margin-top:5px; flex-shrink:0; }
+  .note-row-head span{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14px; line-height:1.35; }
 
-  .notes-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 16px; }
+  .todo-list{ list-style:none; margin:0 0 10px; padding:0; }
+  .todo-list li{
+    display:flex; align-items:flex-start; gap:8px; font-size:13.5px; padding: 5px 0;
+  }
+  .todo-list input[type=checkbox]{ margin-top:3px; accent-color: var(--accent); width:14px; height:14px; flex-shrink:0; }
+  .todo-list li.done label{ text-decoration: line-through; color: var(--text-faint); }
+  .todo-list label{ cursor:pointer; flex:1; }
+  .todo-list .del{
+    border:none; background:none; color: var(--text-faint); cursor:pointer; font-size:12px; padding:0 2px;
+  }
+  .todo-list .del:hover{ color: var(--danger); }
 
-  .note-card{
-    background: linear-gradient(180deg, var(--paper), var(--paper-2));
-    color: var(--ink); border-radius: 2px; box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-    padding: 16px 16px 14px; position:relative;
-  }
-  .note-card::before{
-    content:''; position:absolute; top:0; left:16px; right:16px; height:3px;
-    background: repeating-linear-gradient(90deg, var(--amber) 0 10px, transparent 10px 14px);
-  }
-  .note-head{
-    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size: 13px;
-    text-transform: uppercase; letter-spacing:.03em; margin: 8px 0 10px;
-    display:flex; align-items:center; gap:8px;
-  }
-  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; flex-shrink:0; }
-  .note-list{ list-style:none; margin:0; padding:0; }
-  .note-list li{
-    display:flex; align-items:flex-start; gap:7px; font-size: 12.5px; line-height:1.4;
-    padding: 5px 0; border-bottom: 1px dashed rgba(22,34,47,0.18);
-  }
-  .note-list li:last-child{ border-bottom:none; }
-  .note-list input[type=checkbox]{ margin-top:3px; accent-color: var(--work); width:14px; height:14px; flex-shrink:0; }
-  .note-list li.done label{ text-decoration: line-through; opacity:.5; }
-  .note-list label{ cursor:pointer; flex:1; }
-  .note-list .del{
-    border:none; background:none; color: var(--danger); opacity:.4; cursor:pointer;
-    font-size: 12px; padding:0 2px; flex-shrink:0;
-  }
-  .note-list .del:hover{ opacity:1; }
-
-  .add-row{ display:flex; gap:6px; margin-top:10px; }
+  .add-row{ display:flex; gap:8px; margin-bottom:14px; }
   .add-row input[type=text]{
-    flex:1; font-family:'IBM Plex Sans', sans-serif; font-size: 12px;
-    border: 1px solid rgba(22,34,47,0.25); border-radius: 3px; padding: 6px 8px;
-    background: rgba(255,255,255,0.5); color: var(--ink);
+    flex:1; font-family:'Inter', sans-serif; font-size:13px; color: var(--text);
+    border:none; border-bottom:1px solid var(--line); background:transparent; padding:6px 2px;
   }
+  .add-row input[type=text]::placeholder{ color: var(--text-faint); }
+  .add-row input[type=text]:focus{ outline:none; border-bottom-color: var(--accent); }
   .add-row button{
-    font-family:'IBM Plex Mono', monospace; font-size: 12px; border:none; border-radius:3px;
-    padding: 6px 12px; background: var(--ink); color: var(--paper); cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line);
+    background:none; color: var(--text-dim); padding: 6px 12px; cursor:pointer;
   }
-  .add-row button:hover{ opacity:.85; }
+  .add-row button:hover{ border-color: var(--accent); color: var(--accent); }
 
-  .footnote{
-    margin-top: 26px; font-family:'IBM Plex Mono', monospace; font-size: 11px;
-    color: rgba(244,241,230,0.45); text-align:center;
+  .notes-label{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color: var(--text-faint); margin-bottom:6px;
   }
-  .sync-status{
-    font-family:'IBM Plex Mono', monospace; font-size: 10.5px; text-align:center;
-    margin-top:6px; color: rgba(244,241,230,0.4);
+  textarea.apuntes{
+    width:100%; min-height: 64px; resize: vertical; font-family:'Inter', sans-serif; font-size:13px;
+    color: var(--text-dim); background: rgba(255,255,255,0.02); border:1px solid var(--line-soft);
+    padding: 10px 12px; line-height:1.5;
+  }
+  textarea.apuntes:focus{ outline:none; border-color: var(--line); color: var(--text); }
+  textarea.apuntes::placeholder{ color: var(--text-faint); }
+
+  footer{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--text-faint);
+    border-top: 1px solid var(--line); padding-top: 18px;
   }
   .sync-status.ok{ color: var(--school); }
 
-  @media (max-width: 780px){
-    .titleblock{ grid-template-columns: 1fr 1fr; }
-    .titleblock .proyecto{ grid-column: 1 / -1; }
+  @media (max-width: 720px){
+    .wrap{ padding: 40px 18px 80px; }
+    .note-row{ grid-template-columns: 1fr; gap: 10px; }
+    .cal-grid{ overflow-x:auto; display:block; }
   }
-  :focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+  :focus-visible{ outline: 1.5px solid var(--accent); outline-offset: 2px; }
 </style>
 </head>
 <body>
-<div class="sheet">
+<div class="wrap">
 
-  <div class="titleblock">
-    <div class="cell proyecto">
-      <div class="label">Proyecto</div>
-      <div class="value">Horario semanal — Emiliano González López</div>
+  <div class="kicker">Horario semanal</div>
+  <h1>Emiliano González López</h1>
+  <div class="meta-line"><span>ESCOM · IPN</span> — 5º/6º semestre &nbsp;·&nbsp; <span>Cinemex</span>, L–V 17:00–22:00</div>
+
+  <div class="status-line">
+    <div class="status-left">
+      <span class="dot" id="statusDot"></span>
+      <span class="status-detail" id="statusText">Cargando…</span>
     </div>
-    <div class="cell"><div class="label">Institución</div><div class="value">ESCOM · IPN</div></div>
-    <div class="cell"><div class="label">Semestre / Grupo</div><div class="value">6to — 6CM1/2/3</div></div>
-    <div class="cell"><div class="label">Trabajo</div><div class="value">Cinemex · L–V 17:00–22:00</div></div>
-    <div class="cell"><div class="label">Rev.</div><div class="value">02</div></div>
+    <div class="status-stats" id="statusStats"></div>
   </div>
 
   <div class="banner" id="configBanner">
-    ⚠ <b>Sincronización no configurada.</b> Las notas se guardan solo en este navegador, no viajan entre celular y compu.
-    Pega tu configuración de Firebase en el bloque <code>firebaseConfig</code> dentro de este archivo para activar la sincronización. Ver instrucciones que te dio Claude.
+    <b>Sincronización no configurada.</b> Las notas y apuntes se guardan solo en este navegador y no viajan entre celular y compu.
+    Pega tu configuración de Firebase en el bloque <code>firebaseConfig</code> de este archivo para activarla.
   </div>
 
-  <div class="legend">
-    <span><span class="swatch" style="background:var(--school)"></span>Escuela</span>
-    <span><span class="swatch" style="background:var(--work)"></span>Trabajo</span>
-    <span><span class="swatch" style="background:var(--free)"></span>Libre / tareas / Nixora</span>
+  <div class="conflict-note" id="conflictNote">
+    <b>Conflicto de horario:</b> el viernes de 12:00 a 13:30 aparecen dos materias al mismo tiempo — Arquitectura de Computadoras (5CM5) y Big Data / No-relacionales (6CM3). Revisa cuál es la correcta y avísame para corregirlo.
   </div>
 
-  <div class="grid-wrap">
-    <div class="grid" id="grid">
-      <div class="head" style="border-left:none"></div>
-      <div class="head">Lunes</div><div class="head">Martes</div><div class="head">Miércoles</div>
-      <div class="head">Jueves</div><div class="head">Viernes</div>
-      <div class="time-col" id="timeCol"></div>
-      <div class="day-col" id="col-lun"></div>
-      <div class="day-col" id="col-mar"></div>
-      <div class="day-col" id="col-mie"></div>
-      <div class="day-col" id="col-jue"></div>
-      <div class="day-col" id="col-vie"></div>
+  <section class="section">
+    <div class="section-top">
+      <div class="section-title">Calendario</div>
+      <div class="legend">
+        <span><i style="background:var(--school)"></i>Escuela</span>
+        <span><i style="background:var(--work)"></i>Trabajo</span>
+        <span><i style="background:var(--free)"></i>Libre</span>
+      </div>
     </div>
-  </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </section>
 
-  <div class="section-head">Notas por materia</div>
-  <div class="notes-grid">
-    <div class="note-card" data-key="subj_ingsoft">
-      <div class="note-head"><span class="dot" style="background:var(--school)"></span>Ingeniería de Software</div>
-      <ul class="note-list"></ul>
-      <div class="add-row"><input type="text" placeholder="Agregar nota o pendiente…"><button>+</button></div>
+  <section class="section">
+    <div class="section-top">
+      <div class="section-title">Materias — pendientes y apuntes</div>
     </div>
-    <div class="note-card" data-key="subj_comred">
-      <div class="note-head"><span class="dot" style="background:var(--school)"></span>Apps. Comunicaciones en Red</div>
-      <ul class="note-list"></ul>
-      <div class="add-row"><input type="text" placeholder="Agregar nota o pendiente…"><button>+</button></div>
-    </div>
-    <div class="note-card" data-key="subj_sischip">
-      <div class="note-head"><span class="dot" style="background:var(--school)"></span>Sistemas en Chip</div>
-      <ul class="note-list"></ul>
-      <div class="add-row"><input type="text" placeholder="Agregar nota o pendiente…"><button>+</button></div>
-    </div>
-    <div class="note-card" data-key="subj_bigdata">
-      <div class="note-head"><span class="dot" style="background:var(--school)"></span>Big Data / No-relacionales</div>
-      <ul class="note-list"></ul>
-      <div class="add-row"><input type="text" placeholder="Agregar nota o pendiente…"><button>+</button></div>
-    </div>
-  </div>
+    <div class="notes-list" id="notesSchool"></div>
+  </section>
 
-  <div class="section-head">Trabajo &amp; personal</div>
-  <div class="notes-grid">
-    <div class="note-card" data-key="trabajo">
-      <div class="note-head"><span class="dot" style="background:var(--work)"></span>Trabajo</div>
-      <ul class="note-list"></ul>
-      <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button>+</button></div>
+  <section class="section" style="margin-bottom:0">
+    <div class="section-top">
+      <div class="section-title">Trabajo &amp; personal</div>
     </div>
-    <div class="note-card" data-key="nixora">
-      <div class="note-head"><span class="dot" style="background:var(--free)"></span>Nixora / Personal</div>
-      <ul class="note-list"></ul>
-      <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button>+</button></div>
-    </div>
-  </div>
+    <div class="notes-list" id="notesOther"></div>
+  </section>
 
-  <div class="footnote">Escala 1 semana · Bloques de trabajo fijos 17:00–22:00 · Fines de semana libres para tareas, descanso y Nixora</div>
-  <div class="sync-status" id="syncStatus">—</div>
+  <footer>
+    <span>Escala 1 semana · fines de semana libres</span>
+    <span class="sync-status" id="syncStatus">—</span>
+  </footer>
 </div>
 
-<!-- Firebase (solo se usa si llenas firebaseConfig abajo) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
   // ================== CONFIGURA AQUÍ TU FIREBASE ==================
-  // Pega los valores que te da la consola de Firebase (Project settings > Your apps > Web app)
   const firebaseConfig = {
     apiKey: "PON_AQUI_TU_API_KEY",
     authDomain: "PON_AQUI_TU_AUTH_DOMAIN",
@@ -280,120 +263,297 @@
 
   const isConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.includes('PON_AQUI');
 
-  // ---------- Grid ----------
-  const START_HOUR = 7, END_HOUR = 22, PX_PER_HOUR = 60;
-  const timeCol = document.getElementById('timeCol');
-  for(let h = START_HOUR; h <= END_HOUR; h++){
-    const div = document.createElement('div');
-    div.className = 'hour';
-    div.textContent = String(h).padStart(2,'0') + ':00';
-    timeCol.appendChild(div);
-  }
-  const totalHeight = (END_HOUR - START_HOUR) * PX_PER_HOUR;
-  timeCol.style.height = totalHeight + 'px';
-  document.querySelectorAll('.day-col').forEach(c => c.style.height = totalHeight + 'px');
+  // ---------------- Schedule data ----------------
+  const DAYS = [
+    { key:'lun', label:'Lunes' }, { key:'mar', label:'Martes' }, { key:'mie', label:'Miércoles' },
+    { key:'jue', label:'Jueves' }, { key:'vie', label:'Viernes' }
+  ];
 
-  function timeToY(hhmm){ const [h,m] = hhmm.split(':').map(Number); return (h - START_HOUR + m/60) * PX_PER_HOUR; }
-  function addBlock(colId, start, end, name, room, type){
-    const col = document.getElementById(colId);
-    const top = timeToY(start), height = timeToY(end) - top;
-    const div = document.createElement('div');
-    div.className = 'block b-' + type;
-    div.style.top = top + 'px';
-    div.style.height = Math.max(height, 26) + 'px';
-    div.innerHTML = `<div class="t">${start}–${end}</div><div class="n">${name}</div>${room ? `<div class="r">${room}</div>` : ''}`;
-    col.appendChild(div);
-  }
-
-  addBlock('col-lun','07:00','08:30','Apps. Comunicaciones en Red','Edif. 3 · 210','school');
-  addBlock('col-lun','08:30','10:00','Ingeniería de Software','Edif. 3 · 210','school');
-  addBlock('col-mar','10:30','12:00','Sistemas en Chip','Edif. 3 · 211','school');
-  addBlock('col-mar','12:00','13:30','Big Data / No-relacionales','Edif. 3 · 212','school');
-  addBlock('col-mie','08:30','10:00','Ingeniería de Software','Edif. 3 · 210','school');
-  addBlock('col-mie','10:30','12:00','Sistemas en Chip','Edif. 3 · 211','school');
-  addBlock('col-mie','13:30','15:00','Big Data / No-relacionales','Edif. 3 · 212','school');
-  addBlock('col-jue','07:00','08:30','Apps. Comunicaciones en Red','Edif. 3 · 210','school');
-  addBlock('col-jue','08:30','10:00','Ingeniería de Software','Edif. 3 · 210','school');
-  addBlock('col-vie','08:30','10:00','Apps. Comunicaciones en Red','Edif. 3 · 210','school');
-  addBlock('col-vie','10:30','12:00','Sistemas en Chip','Edif. 3 · 211','school');
-  addBlock('col-vie','12:00','13:30','Big Data / No-relacionales','Edif. 3 · 212','school');
-
-  addBlock('col-lun','10:00','17:00','Traslado, comida, tareas, Nixora','','free');
-  addBlock('col-mar','13:30','17:00','Traslado, comida, tareas, Nixora','','free');
-  addBlock('col-mie','15:00','17:00','Traslado, comida, tareas, Nixora','','free');
-  addBlock('col-jue','10:00','17:00','Traslado, comida, tareas, Nixora','','free');
-  addBlock('col-vie','13:30','17:00','Traslado, comida, tareas, Nixora','','free');
-
-  ['col-lun','col-mar','col-mie','col-jue','col-vie'].forEach(c => addBlock(c,'17:00','22:00','Cinemex','','work'));
-
-  // ---------- Notes: state + sync ----------
-  const defaultState = {
-    subj_ingsoft: [{text:'Revisar tareas pendientes', done:false}],
-    subj_comred: [{text:'Revisar tareas pendientes', done:false}],
-    subj_sischip: [{text:'Revisar tareas pendientes', done:false}],
-    subj_bigdata: [{text:'Revisar tareas pendientes', done:false}],
-    trabajo: [{text:'Confirmar turno de la semana con el gerente', done:false}],
-    nixora: [{text:'Revisar pedidos pendientes en Telegram', done:false}]
+  const SCHEDULE = {
+    lun: [
+      { start:'07:00', end:'08:30', type:'school', name:'Apps. Comunicaciones en Red', room:'Edif. 3 · 210' },
+      { start:'08:30', end:'10:00', type:'school', name:'Ingeniería de Software', room:'Edif. 3 · 210' },
+      { start:'10:00', end:'10:30', type:'free', name:'Libre' },
+      { start:'10:30', end:'12:00', type:'school', name:'Formulación y Evaluación de Proyectos', room:'Edif. 3 · 108' },
+      { start:'12:00', end:'13:30', type:'school', name:'Arquitectura de Computadoras', room:'Edif. 3 · 112' },
+      { start:'13:30', end:'17:00', type:'free', name:'Traslado, comida, tareas, Nixora' },
+      { start:'17:00', end:'22:00', type:'work', name:'Cinemex' }
+    ],
+    mar: [
+      { start:'08:30', end:'10:00', type:'school', name:'Formulación y Evaluación de Proyectos', room:'Edif. 3 · 108' },
+      { start:'10:00', end:'10:30', type:'free', name:'Libre' },
+      { start:'10:30', end:'12:00', type:'school', name:'Sistemas en Chip', room:'Edif. 3 · 211' },
+      { start:'12:00', end:'13:30', type:'school', name:'Big Data / No-relacionales', room:'Edif. 3 · 212' },
+      { start:'13:30', end:'17:00', type:'free', name:'Traslado, comida, tareas, Nixora' },
+      { start:'17:00', end:'22:00', type:'work', name:'Cinemex' }
+    ],
+    mie: [
+      { start:'08:30', end:'10:00', type:'school', name:'Ingeniería de Software', room:'Edif. 3 · 210' },
+      { start:'10:00', end:'10:30', type:'free', name:'Libre' },
+      { start:'10:30', end:'12:00', type:'school', name:'Sistemas en Chip', room:'Edif. 3 · 211' },
+      { start:'12:00', end:'13:30', type:'free', name:'Libre' },
+      { start:'13:30', end:'15:00', type:'school', name:'Big Data / No-relacionales', room:'Edif. 3 · 212' },
+      { start:'15:00', end:'17:00', type:'free', name:'Traslado, comida, tareas, Nixora' },
+      { start:'17:00', end:'22:00', type:'work', name:'Cinemex' }
+    ],
+    jue: [
+      { start:'07:00', end:'08:30', type:'school', name:'Apps. Comunicaciones en Red', room:'Edif. 3 · 210' },
+      { start:'08:30', end:'10:00', type:'school', name:'Ingeniería de Software', room:'Edif. 3 · 210' },
+      { start:'10:00', end:'10:30', type:'free', name:'Libre' },
+      { start:'10:30', end:'12:00', type:'school', name:'Formulación y Evaluación de Proyectos', room:'Edif. 3 · 108' },
+      { start:'12:00', end:'13:30', type:'school', name:'Arquitectura de Computadoras', room:'Edif. 3 · 112' },
+      { start:'13:30', end:'17:00', type:'free', name:'Traslado, comida, tareas, Nixora' },
+      { start:'17:00', end:'22:00', type:'work', name:'Cinemex' }
+    ],
+    vie: [
+      { start:'08:30', end:'10:00', type:'school', name:'Apps. Comunicaciones en Red', room:'Edif. 3 · 210' },
+      { start:'10:00', end:'10:30', type:'free', name:'Libre' },
+      { start:'10:30', end:'12:00', type:'school', name:'Sistemas en Chip', room:'Edif. 3 · 211' },
+      { start:'12:00', end:'13:30', type:'school', name:'Arquitectura de Computadoras', room:'Edif. 3 · 112' },
+      { start:'12:00', end:'13:30', type:'school', name:'Big Data / No-relacionales', room:'Edif. 3 · 212' },
+      { start:'13:30', end:'17:00', type:'free', name:'Traslado, comida, tareas, Nixora' },
+      { start:'17:00', end:'22:00', type:'work', name:'Cinemex' }
+    ]
   };
+
+  const START_HOUR = 7, END_HOUR = 22, PX_PER_HOUR = 52;
+  const toMin = t => { const [h,m] = t.split(':').map(Number); return h*60+m; };
+  const toY = t => (toMin(t) - START_HOUR*60) / 60 * PX_PER_HOUR;
+
+  const JS_DAY_TO_KEY = { 0:null, 1:'lun', 2:'mar', 3:'mie', 4:'jue', 5:'vie', 6:null };
+
+  // Groups overlapping blocks in a day so conflicts render side-by-side instead of stacking silently
+  function layoutDay(blocks){
+    const sorted = [...blocks].sort((a,b)=> toMin(a.start) - toMin(b.start));
+    const clusters = [];
+    let current = [], currentEnd = -1;
+    sorted.forEach(b=>{
+      const s = toMin(b.start), e = toMin(b.end);
+      if(current.length && s < currentEnd){
+        current.push(b);
+        currentEnd = Math.max(currentEnd, e);
+      } else {
+        if(current.length) clusters.push(current);
+        current = [b]; currentEnd = e;
+      }
+    });
+    if(current.length) clusters.push(current);
+
+    const positioned = [];
+    clusters.forEach(cluster=>{
+      cluster.forEach((b, i)=> positioned.push({ ...b, slot:i, slots:cluster.length }));
+    });
+    return positioned;
+  }
+
+  function buildCalendar(){
+    const grid = document.getElementById('calGrid');
+    const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+    grid.innerHTML = '';
+    let hasConflict = false;
+
+    const corner = document.createElement('div');
+    corner.className = 'day-head';
+    corner.style.borderLeft = 'none';
+    grid.appendChild(corner);
+
+    DAYS.forEach(d=>{
+      const head = document.createElement('div');
+      head.className = 'day-head' + (d.key === todayKey ? ' today' : '');
+      head.innerHTML = d.label + (d.key === todayKey ? '<span>HOY</span>' : '');
+      grid.appendChild(head);
+    });
+
+    const totalHeight = (END_HOUR - START_HOUR) * PX_PER_HOUR;
+    const timeCol = document.createElement('div');
+    timeCol.className = 'time-col';
+    timeCol.style.height = totalHeight + 'px';
+    for(let h = START_HOUR; h <= END_HOUR; h++){
+      const label = document.createElement('div');
+      label.className = 'hour-label';
+      label.textContent = String(h).padStart(2,'0');
+      timeCol.appendChild(label);
+    }
+    grid.appendChild(timeCol);
+
+    DAYS.forEach(d=>{
+      const col = document.createElement('div');
+      col.className = 'day-col' + (d.key === todayKey ? ' today' : '');
+      col.style.height = totalHeight + 'px';
+      const positioned = layoutDay(SCHEDULE[d.key] || []);
+      positioned.forEach(b=>{
+        const top = toY(b.start);
+        const height = Math.max(toY(b.end) - top, 26);
+        const conflict = b.slots > 1;
+        if(conflict) hasConflict = true;
+        const block = document.createElement('div');
+        block.className = 'block type-' + b.type + (conflict ? ' conflict' : '');
+        block.style.top = top + 'px';
+        block.style.height = height + 'px';
+        const widthPct = 100 / b.slots;
+        block.style.left = (b.slot * widthPct) + '%';
+        block.style.width = `calc(${widthPct}% - 4px)`;
+        block.innerHTML = b.type === 'free'
+          ? `<div class="n">${b.name}</div>`
+          : `<div class="t">${b.start}–${b.end}</div><div class="n">${b.name}</div>${b.room ? `<div class="r">${b.room}</div>` : ''}`;
+        col.appendChild(block);
+      });
+      grid.appendChild(col);
+    });
+
+    if(hasConflict) document.getElementById('conflictNote').classList.add('show');
+  }
+
+  function computeWeeklyHours(type){
+    let mins = 0;
+    Object.values(SCHEDULE).forEach(blocks=> blocks.forEach(b=>{ if(b.type === type) mins += toMin(b.end) - toMin(b.start); }));
+    return mins / 60;
+  }
+  const fmtHours = h => (Number.isInteger(h) ? h : h.toFixed(1)) + 'h';
+
+  function updateStatus(){
+    const now = new Date();
+    const key = JS_DAY_TO_KEY[now.getDay()];
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+
+    if(!key){
+      dot.className = 'dot';
+      text.innerHTML = 'Fin de semana — sin clases ni turno fijo';
+      return;
+    }
+    const blocks = SCHEDULE[key];
+    const current = blocks.find(b => nowMin >= toMin(b.start) && nowMin < toMin(b.end) && b.type !== 'free');
+    if(current){
+      dot.className = 'dot live';
+      const label = current.type === 'school' ? 'Clase' : 'Trabajo';
+      text.innerHTML = `${label} ahora: <b>${current.name}</b> · termina ${current.end}`;
+      return;
+    }
+    const next = blocks.find(b => toMin(b.start) > nowMin && b.type !== 'free');
+    dot.className = 'dot';
+    text.innerHTML = next ? `Siguiente: <b>${next.name}</b> a las ${next.start}` : 'Sin más actividad hoy';
+  }
+
+  buildCalendar();
+  updateStatus();
+  setInterval(updateStatus, 60000);
+  document.getElementById('statusStats').textContent =
+    `${fmtHours(computeWeeklyHours('school'))} clases · ${fmtHours(computeWeeklyHours('work'))} trabajo / semana`;
+
+  // ---------------- Notes: state + Firebase sync ----------------
+  const SUBJECT_CARDS = [
+    { key:'subj_ingsoft', label:'Ingeniería de Software' },
+    { key:'subj_comred', label:'Apps. Comunicaciones en Red' },
+    { key:'subj_sischip', label:'Sistemas en Chip' },
+    { key:'subj_bigdata', label:'Big Data / No-relacionales' },
+    { key:'subj_formulacion', label:'Formulación y Evaluación de Proyectos' },
+    { key:'subj_arquitectura', label:'Arquitectura de Computadoras' }
+  ];
+  const OTHER_CARDS = [
+    { key:'trabajo', label:'Trabajo', color:'var(--work)' },
+    { key:'nixora', label:'Nixora / Personal', color:'var(--free)' }
+  ];
+
+  function renderRowShell(container, cards, colorFn){
+    cards.forEach(c=>{
+      const row = document.createElement('div');
+      row.className = 'note-row';
+      row.dataset.key = c.key;
+      row.innerHTML = `
+        <div class="note-row-head">
+          <i style="background:${colorFn ? colorFn(c) : 'var(--school)'}"></i>
+          <span>${c.label}</span>
+        </div>
+        <div class="note-row-body">
+          <ul class="todo-list"></ul>
+          <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button>Agregar</button></div>
+          <div class="notes-label">Apuntes</div>
+          <textarea class="apuntes" placeholder="Escribe recordatorios, dudas o cosas importantes de esta materia…"></textarea>
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+  renderRowShell(document.getElementById('notesSchool'), SUBJECT_CARDS);
+  renderRowShell(document.getElementById('notesOther'), OTHER_CARDS, c => c.color);
+
+  function emptyEntry(){ return { todos: [], notes: '' }; }
+  const defaultState = {};
+  SUBJECT_CARDS.forEach(c => defaultState[c.key] = emptyEntry());
+  OTHER_CARDS.forEach(c => defaultState[c.key] = emptyEntry());
+  defaultState.subj_ingsoft.todos = [{ text:'Revisar tareas pendientes', done:false }];
+  defaultState.trabajo.todos = [{ text:'Confirmar turno de la semana con el gerente', done:false }];
+  defaultState.nixora.todos = [{ text:'Revisar pedidos pendientes en Telegram', done:false }];
 
   let state = JSON.parse(JSON.stringify(defaultState));
   let docRef = null;
   const syncStatus = document.getElementById('syncStatus');
+  let saveTimer = null;
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveState, 500);
+  }
+  function saveState(){
+    if(docRef) docRef.set(state).catch(e => console.error('Error al guardar en Firebase:', e));
+  }
 
-  function renderAll(){
-    document.querySelectorAll('.note-card').forEach(card=>{
-      const key = card.dataset.key;
-      const ul = card.querySelector('.note-list');
+  function renderNotes(){
+    document.querySelectorAll('.note-row').forEach(row=>{
+      const key = row.dataset.key;
+      if(!state[key]) state[key] = emptyEntry();
+      const ul = row.querySelector('.todo-list');
       ul.innerHTML = '';
-      (state[key] || []).forEach((item, idx)=>{
+      state[key].todos.forEach((item, idx)=>{
         const li = document.createElement('li');
         if(item.done) li.classList.add('done');
         const id = key + '-' + idx + '-' + Math.random().toString(36).slice(2,6);
-        li.innerHTML = `<input type="checkbox" id="${id}" ${item.done?'checked':''}><label for="${id}"></label><button class="del" title="Eliminar">✕</button>`;
+        li.innerHTML = `<input type="checkbox" id="${id}" ${item.done ? 'checked' : ''}><label for="${id}"></label><button class="del" title="Eliminar">✕</button>`;
         li.querySelector('label').textContent = item.text;
         li.querySelector('input').addEventListener('change', e=>{
-          state[key][idx].done = e.target.checked;
+          state[key].todos[idx].done = e.target.checked;
           li.classList.toggle('done', e.target.checked);
-          saveState();
+          scheduleSave();
         });
         li.querySelector('.del').addEventListener('click', ()=>{
-          state[key].splice(idx,1);
-          saveState();
-          renderAll();
+          state[key].todos.splice(idx,1);
+          scheduleSave();
+          renderNotes();
         });
         ul.appendChild(li);
       });
+      const textarea = row.querySelector('.apuntes');
+      if(document.activeElement !== textarea) textarea.value = state[key].notes || '';
     });
   }
 
-  function saveState(){
-    if(docRef){
-      docRef.set(state).catch(e => console.error('Error al guardar en Firebase:', e));
-    }
-  }
-
-  document.querySelectorAll('.note-card').forEach(card=>{
-    const key = card.dataset.key;
-    const input = card.querySelector('.add-row input');
-    const button = card.querySelector('.add-row button');
+  document.querySelectorAll('.note-row').forEach(row=>{
+    const key = row.dataset.key;
+    const input = row.querySelector('.add-row input');
+    const button = row.querySelector('.add-row button');
     const submit = ()=>{
       const val = input.value.trim();
       if(!val) return;
-      if(!state[key]) state[key] = [];
-      state[key].push({text: val, done:false});
-      saveState();
-      renderAll();
+      state[key].todos.push({ text: val, done:false });
+      scheduleSave();
+      renderNotes();
       input.value = '';
     };
     button.addEventListener('click', submit);
     input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+
+    const textarea = row.querySelector('.apuntes');
+    textarea.addEventListener('input', e=>{
+      state[key].notes = e.target.value;
+      scheduleSave();
+    });
   });
 
-  async function init(){
+  async function initSync(){
     if(!isConfigured){
       document.getElementById('configBanner').classList.add('show');
       syncStatus.textContent = 'Sin sincronizar (solo este navegador)';
-      renderAll();
+      renderNotes();
       return;
     }
     try{
@@ -402,25 +562,25 @@
       docRef = db.collection('planner').doc('emiliano');
       const snap = await docRef.get();
       if(snap.exists){
-        state = snap.data();
+        const loaded = snap.data();
+        Object.keys(defaultState).forEach(k => { if(!loaded[k]) loaded[k] = emptyEntry(); });
+        state = loaded;
       } else {
         await docRef.set(state);
       }
-      renderAll();
+      renderNotes();
       syncStatus.textContent = 'Sincronizado con Firebase ✓';
       syncStatus.classList.add('ok');
-      docRef.onSnapshot(snap => {
-        if(snap.exists){ state = snap.data(); renderAll(); }
-      });
+      docRef.onSnapshot(snap => { if(snap.exists){ state = snap.data(); renderNotes(); } });
     }catch(e){
       console.error('No se pudo conectar a Firebase:', e);
       document.getElementById('configBanner').classList.add('show');
-      syncStatus.textContent = 'Error de conexión con Firebase (revisa la consola)';
-      renderAll();
+      syncStatus.textContent = 'Error de conexión con Firebase';
+      renderNotes();
     }
   }
 
-  init();
+  initSync();
 </script>
 </body>
 </html>
