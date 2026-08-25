@@ -324,6 +324,16 @@
   </footer>
 </div>
 
+<div class="note-modal" id="noteModal" aria-hidden="true"><div class="note-modal-box" role="dialog" aria-modal="true">
+    <div class="note-modal-head"><div><div class="note-modal-kicker">Nuevo apunte</div><h3>Agregar apunte</h3></div><button class="note-modal-close" id="closeNoteModal" type="button">Cerrar</button></div>
+    <div class="note-modal-grid">
+      <div class="note-field"><label>Fecha</label><input id="modalNoteDate" type="date"></div>
+      <div class="note-field"><label>Materia</label><select id="modalNoteSubject"></select></div>
+      <div class="note-field full"><label>Título</label><input id="modalNoteTitle" placeholder="Ej. Clase 2 — Fundamentos"></div>
+      <div class="note-field full"><label>Apunte</label><textarea id="modalNoteContent" placeholder="Escribe aquí lo que viste en clase..."></textarea></div>
+    </div><div class="note-modal-actions"><button id="cancelNoteModal" type="button">Cancelar</button><button id="saveNoteModal" class="primary" type="button">Guardar apunte</button></div>
+  </div></div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
@@ -814,14 +824,6 @@ IV. Calidad y modelo de madurez`;
 
 </script>
 
-  <div class="note-modal" id="noteModal" aria-hidden="true"><div class="note-modal-box" role="dialog" aria-modal="true">
-    <div class="note-modal-head"><div><div class="note-modal-kicker">Nuevo apunte</div><h3>Agregar apunte</h3></div><button class="note-modal-close" id="closeNoteModal" type="button">Cerrar</button></div>
-    <div class="note-modal-grid">
-      <div class="note-field"><label>Fecha</label><input id="modalNoteDate" type="date"></div>
-      <div class="note-field"><label>Materia</label><select id="modalNoteSubject"></select></div>
-      <div class="note-field full"><label>Título</label><input id="modalNoteTitle" placeholder="Ej. Clase 2 — Fundamentos"></div>
-      <div class="note-field full"><label>Apunte</label><textarea id="modalNoteContent" placeholder="Escribe aquí lo que viste en clase..."></textarea></div>
-    </div><div class="note-modal-actions"><button id="cancelNoteModal" type="button">Cancelar</button><button id="saveNoteModal" class="primary" type="button">Guardar apunte</button></div>
-  </div></div>
+  
 </body>
 </html>
