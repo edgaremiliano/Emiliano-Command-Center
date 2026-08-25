@@ -486,6 +486,74 @@
   defaultState.trabajo.todos = [{ text:'Confirmar turno de la semana con el gerente', done:false }];
   defaultState.nixora.todos = [{ text:'Revisar pedidos pendientes en Telegram', done:false }];
 
+  defaultState.subj_arquitectura.todos = [
+    { text:'Cuestionario 1 — 24 de septiembre', done:false },
+    { text:'Cuestionario 2 — 29 de octubre', done:false },
+    { text:'Cuestionario 3 — 3 de diciembre', done:false },
+    { text:'Extraordinario — 14 de diciembre', done:false }
+  ];
+  defaultState.subj_arquitectura.notes =
+`Evaluación: 60% exámenes / 40% prácticas
+
+Cuestionarios (40%)
+- 1° → 24 de septiembre
+- 2° → 29 de octubre
+- 3° → 3 de diciembre
+- Extraordinario → 14 de diciembre
+
+Herramientas
+- Software Diamond: para programar el FPGA MachXO2-7000HE (Lattice Semiconductor) — www.latticesemi.com
+- Simulación: Savant, Verilog, ModelSim
+- Simuladores de arquitectura: QtSpim (Assembler), CPUlator, LEGv8
+
+Notas
+- Tareas se entregan a mano
+- WhatsApp: 55 6128 7597`;
+
+  defaultState.subj_comred.todos = [
+    { text:'Entrega 1° — 30 de septiembre, 2026', done:false },
+    { text:'Entrega 2° — 9 de noviembre, 2026', done:false },
+    { text:'Entrega 3° — 10 de diciembre, 2026', done:false }
+  ];
+  defaultState.subj_comred.notes =
+`Prof. Axel Ernesto Moreno Cervantes
+Correo dudas: axel.epcom@gmail.com
+Correo portafolio evidencias: axel.redesyaplicaciones@gmail.com
+Horario de atención: Lun–Vie, 13:30–15:00
+
+Contenido del curso
+1er parcial: Unidad 1 Sockets bloqueantes / Unidad 2 Arquitectura múltiple para servidores
+2do parcial: Unidad 3 Sockets no bloqueantes / Unidad 4 Protocolo de capa de aplicación
+3er parcial: Unidad 5 Invocación a métodos remotos / Unidad 6 Aplicaciones P2P
+Extra: Función de selector — ve si hay lectura en la entrada y avisa al proceso para escribir
+
+Evaluación por parcial
+              1er      2do      3er
+Prácticas      60%      40%      40%
+Tareas/ej.     40%      40%      10%
+Proyectos       —       20%      20%
+Exámenes        —        —       30%
+(prácticas en Java y C de Linux)
+
+Fechas de entrega
+1° → 30 sept 2026
+2° → 9 nov 2026
+3° → 10 dic 2026
+
+Formato del reporte
+Carátula profesional, Introducción, Desarrollo (narra cómo implementaron las funcionalidades), Pruebas (capturas), Conclusión individual, Fuentes
+
+Recursos
+Página del curso: http://148.204.58.221/axel/aplicaciones/
+Oficina: 3105`;
+
+  defaultState.subj_ingsoft.notes =
+`Temario
+I. Fundamentos
+II. Diseño y construcción
+III. Pruebas de software
+IV. Calidad y modelo de madurez`;
+
   let state = JSON.parse(JSON.stringify(defaultState));
   let docRef = null;
   const syncStatus = document.getElementById('syncStatus');
