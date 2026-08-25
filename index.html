@@ -228,6 +228,18 @@
 }
 .add-row button:hover{ border-color:var(--accent); color:var(--accent); }
 
+
+/* APUNTES UI UPGRADE */
+.notes-hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;margin-bottom:18px;padding:18px 0 16px;border-bottom:1px solid var(--line)}
+.notes-kicker{font:9px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.notes-title{margin:0;font:600 24px 'Space Grotesk',sans-serif;letter-spacing:-.02em}.notes-copy{margin:6px 0 0;color:var(--text-dim);font-size:12px;line-height:1.5}
+.notes-day{border:1px solid var(--line);padding:10px 13px;min-width:145px}.notes-day small{display:block;font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase}.notes-day strong{display:block;margin-top:3px;font:600 14px 'Space Grotesk',sans-serif}
+.notes-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.notes-stat{border:1px solid var(--line-soft);padding:11px 12px;background:rgba(255,255,255,.012)}.notes-stat b{font:600 18px 'Space Grotesk',sans-serif}.notes-stat span{display:block;margin-top:3px;font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase}
+.quick-add{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding:13px 14px;border:1px dashed var(--line);background:rgba(201,161,90,.025)}.quick-add strong{display:block;font:600 12px 'Space Grotesk',sans-serif}.quick-add span{display:block;margin-top:3px;font-size:11px;color:var(--text-faint)}.quick-add button{border:1px solid var(--accent);background:transparent;color:var(--accent);padding:8px 11px;font:10px 'IBM Plex Mono',monospace;cursor:pointer}.quick-add button:hover{background:rgba(201,161,90,.08)}
+.note-heading{display:flex;align-items:center;gap:8px}.note-index{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--line);font:9px 'IBM Plex Mono',monospace;color:var(--accent)}.note-name{font:600 14px 'Space Grotesk',sans-serif}.note-sub{font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);margin-top:2px}.note-save{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);font:9px 'IBM Plex Mono',monospace;color:var(--text-faint)}
+.note-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}.note-modal.show{display:flex}.note-modal-box{width:min(650px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--line);padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.45)}.note-modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}.note-modal-kicker{font:9px 'IBM Plex Mono',monospace;color:var(--accent);text-transform:uppercase}.note-modal h3{margin:5px 0 0;font:600 20px 'Space Grotesk',sans-serif}.note-modal-close{border:1px solid var(--line);background:transparent;color:var(--text-dim);padding:6px 9px;cursor:pointer}.note-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.note-field{display:grid;gap:6px;margin-bottom:11px}.note-field.full{grid-column:1/-1}.note-field label{font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase}.note-field input,.note-field select,.note-field textarea{box-sizing:border-box;width:100%;padding:9px 10px;color:var(--text);background:rgba(255,255,255,.025);border:1px solid var(--line-soft);font:12px 'Inter',sans-serif}.note-field textarea{min-height:180px;resize:vertical;line-height:1.5}.note-field input:focus,.note-field select:focus,.note-field textarea:focus{outline:none;border-color:var(--accent)}.note-modal-actions{display:flex;justify-content:flex-end;gap:8px}.note-modal-actions button{font:10px 'IBM Plex Mono',monospace;padding:9px 13px;border:1px solid var(--line);background:transparent;color:var(--text-dim);cursor:pointer}.note-modal-actions .primary{border-color:var(--accent);color:var(--accent)}
+@media(max-width:720px){.notes-hero{grid-template-columns:1fr}.notes-day{min-width:0}.note-modal-grid{grid-template-columns:1fr}.note-field.full{grid-column:auto}.quick-add{align-items:flex-start}}
+
   footer{
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
     font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--text-faint);
@@ -318,12 +330,12 @@
 <script>
   // ================== CONFIGURA AQUÍ TU FIREBASE ==================
   const firebaseConfig = {
-    apiKey: "AIzaSyBZU60AcNNLS1VVvvu-5e5vdHZm_5dirbU",
-    authDomain: "emiliano-command-center.firebaseapp.com",
-    projectId: "emiliano-command-center",
-    storageBucket: "emiliano-command-center.firebasestorage.app",
-    messagingSenderId: "679626629450",
-    appId: "1:679626629450:web:3fdfb8f6d53e950199e1b3"
+    apiKey: "PON_AQUI_TU_API_KEY",
+    authDomain: "PON_AQUI_TU_AUTH_DOMAIN",
+    projectId: "PON_AQUI_TU_PROJECT_ID",
+    storageBucket: "PON_AQUI_TU_STORAGE_BUCKET",
+    messagingSenderId: "PON_AQUI_TU_SENDER_ID",
+    appId: "PON_AQUI_TU_APP_ID"
   };
   // ==================================================================
 
@@ -701,140 +713,31 @@ IV. Calidad y modelo de madurez`;
   }
 
   function renderNotes(){
-    ensureDate(selectedDate);
-    populateFilters();
-
-    document.getElementById('currentDateLabel').textContent = formatDateLong(selectedDate);
-    const container = document.getElementById('notesBySubject');
-    container.innerHTML = '';
-
-    const notes = (state.notesByDate[selectedDate] || [])
-      .filter(n => selectedSubject === 'all' || n.subjectKey === selectedSubject);
-
-    const visibleCards = selectedSubject === 'all'
-      ? ALL_CARDS
-      : ALL_CARDS.filter(c => c.key === selectedSubject);
-
-    if(!notes.length && visibleCards.every(c => !(state.todosByDate[selectedDate]?.[c.key] || []).length)){
-      container.innerHTML = `<div class="notes-empty">No hay apuntes ni pendientes para esta fecha. Usa <b>+ Nuevo apunte</b> para comenzar.</div>`;
-      return;
-    }
-
-    visibleCards.forEach(card=>{
-      const cardNotes = notes.filter(n=>n.subjectKey === card.key);
-      const todos = state.todosByDate[selectedDate]?.[card.key] || [];
-      if(!cardNotes.length && !todos.length) return;
-
-      const group = document.createElement('div');
-      group.className = 'subject-group';
-      const color = card.color || 'var(--school)';
-      group.innerHTML = `
-        <div class="subject-head">
-          <div class="subject-name"><i style="background:${color}"></i>${card.label}</div>
-          <div class="subject-count">${cardNotes.length} apunte${cardNotes.length===1?'':'s'} · ${todos.length} pendiente${todos.length===1?'':'s'}</div>
-        </div>
-      `;
-
-      cardNotes.forEach(note=>{
-        const cardEl = document.createElement('article');
-        cardEl.className = 'note-card';
-        cardEl.dataset.id = note.id;
-        cardEl.innerHTML = `
-          <div class="note-card-head">
-            <div class="note-meta">APUNTE · <span class="updated"></span></div>
-            <div class="note-actions">
-              <button type="button" class="delete">Eliminar</button>
-            </div>
-          </div>
-          <div class="note-editor">
-            <input class="note-title" type="text" value="">
-            <textarea class="note-content" placeholder="Escribe aquí el apunte..."></textarea>
-          </div>
-        `;
-        cardEl.querySelector('.note-title').value = note.title || '';
-        cardEl.querySelector('.note-content').value = note.content || '';
-        cardEl.querySelector('.updated').textContent =
-          'actualizado ' + new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt || note.createdAt || Date.now()));
-
-        const update = (field, value)=>{
-          note[field] = value;
-          note.updatedAt = new Date().toISOString();
-          cardEl.querySelector('.updated').textContent =
-            'actualizado ' + new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt));
-          scheduleSave();
-        };
-        cardEl.querySelector('.note-title').addEventListener('input', e=>update('title', e.target.value));
-        cardEl.querySelector('.note-content').addEventListener('input', e=>update('content', e.target.value));
-        cardEl.querySelector('.delete').addEventListener('click', ()=>{
-          if(!confirm('¿Eliminar este apunte?')) return;
-          state.notesByDate[selectedDate] = state.notesByDate[selectedDate].filter(n=>n.id !== note.id);
-          scheduleSave();
-          renderNotes();
-        });
-        group.appendChild(cardEl);
-      });
-
-      if(todos.length){
-        const todoBox = document.createElement('div');
-        todoBox.className = 'todo-box';
-        todoBox.innerHTML = `<div class="todo-title">Pendientes de ${formatDateLong(selectedDate)}</div><ul class="todo-list"></ul>
-          <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button type="button">Agregar</button></div>`;
-        const ul = todoBox.querySelector('.todo-list');
-        todos.forEach((item, idx)=>{
-          const li = document.createElement('li');
-          if(item.done) li.classList.add('done');
-          li.innerHTML = `<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button" title="Eliminar">✕</button>`;
-          li.querySelector('label').textContent = item.text;
-          li.querySelector('input').addEventListener('change', e=>{
-            item.done = e.target.checked;
-            li.classList.toggle('done', item.done);
-            scheduleSave();
-          });
-          li.querySelector('.del').addEventListener('click', ()=>{
-            todos.splice(idx,1);
-            scheduleSave();
-            renderNotes();
-          });
-          ul.appendChild(li);
-        });
-        const input = todoBox.querySelector('input[type=text]');
-        const add = ()=>{
-          const val = input.value.trim();
-          if(!val) return;
-          todos.push({text:val,done:false});
-          scheduleSave();
-          renderNotes();
-        };
-        todoBox.querySelector('button').addEventListener('click', add);
-        input.addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
-        group.appendChild(todoBox);
-      }
-
-      const add = document.createElement('div');
-      add.className = 'add-note';
-      add.innerHTML = `<button type="button">+ Agregar apunte a ${card.label}</button>`;
-      add.querySelector('button').addEventListener('click', ()=>addNote(card.key));
-      group.appendChild(add);
-      container.appendChild(group);
+    ensureDate(selectedDate); populateFilters();
+    document.getElementById('currentDateLabel').textContent=formatDateLong(selectedDate);
+    const container=document.getElementById('notesBySubject'); container.innerHTML='';
+    const allNotes=state.notesByDate[selectedDate]||[];
+    const notes=allNotes.filter(n=>selectedSubject==='all'||n.subjectKey===selectedSubject);
+    const cards=selectedSubject==='all'?ALL_CARDS:ALL_CARDS.filter(c=>c.key===selectedSubject);
+    const todoMap=state.todosByDate[selectedDate]||{};
+    const allTodos=Object.values(todoMap).reduce((a,b)=>a+b.length,0), pending=Object.values(todoMap).flat().filter(t=>!t.done).length;
+    const hero=document.createElement('div'); hero.className='notes-hero'; hero.innerHTML=`<div><div class="notes-kicker">Agenda académica</div><h2 class="notes-title">${formatDateLong(selectedDate)}</h2><p class="notes-copy">Crea, edita y organiza tus apuntes directamente desde el calendario. Todo queda guardado por fecha y materia.</p></div><div class="notes-day"><small>Día seleccionado</small><strong>${selectedDate.split('-').reverse().join('/')}</strong></div>`; container.appendChild(hero);
+    const summary=document.createElement('div'); summary.className='notes-summary'; summary.innerHTML=`<div class="notes-stat"><b>${allNotes.length}</b><span>Apuntes</span></div><div class="notes-stat"><b>${allTodos}</b><span>Pendientes</span></div><div class="notes-stat"><b>${pending}</b><span>Por hacer</span></div>`; container.appendChild(summary);
+    const quick=document.createElement('div'); quick.className='quick-add'; quick.innerHTML='<div><strong>¿Acabas de salir de clase?</strong><span>Agrega tu apunte directamente a este día.</span></div><button type="button">＋ Nuevo apunte</button>'; quick.querySelector('button').onclick=()=>openNoteModal(selectedDate,selectedSubject==='all'?SUBJECT_CARDS[0].key:selectedSubject); container.appendChild(quick);
+    cards.forEach(card=>{const cardNotes=notes.filter(n=>n.subjectKey===card.key),todos=todoMap[card.key]||[]; if(!cardNotes.length&&!todos.length)return; const group=document.createElement('div'); group.className='subject-group'; const color=card.color||'var(--school)'; group.innerHTML=`<div class="subject-head"><div class="subject-name"><i style="background:${color}"></i>${card.label}</div><div class="subject-count">${cardNotes.length} apunte${cardNotes.length===1?'':'s'} · ${todos.length} pendiente${todos.length===1?'':'s'}</div></div>`;
+      cardNotes.forEach((note,i)=>{const el=document.createElement('article');el.className='note-card';el.dataset.id=note.id;el.innerHTML=`<div class="note-card-head"><div class="note-heading"><span class="note-index">${String(i+1).padStart(2,'0')}</span><div><div class="note-name"></div><div class="note-sub">APUNTE · ${formatDateLong(note.date)}</div></div></div><div class="note-actions"><button type="button" class="delete">Eliminar</button></div></div><div class="note-editor"><input class="note-title" type="text"><textarea class="note-content" placeholder="Escribe aquí el apunte..."></textarea></div><div class="note-save"><span>Guardado automáticamente</span><span class="updated"></span></div>`; const title=el.querySelector('.note-title'),content=el.querySelector('.note-content'); title.value=note.title||'';content.value=note.content||'';el.querySelector('.note-name').textContent=note.title||'Apunte sin título'; const stamp=()=>el.querySelector('.updated').textContent='actualizado '+new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt||note.createdAt||Date.now())); stamp(); const update=(f,v)=>{note[f]=v;note.updatedAt=new Date().toISOString();if(f==='title')el.querySelector('.note-name').textContent=v||'Apunte sin título';stamp();scheduleSave()};title.oninput=e=>update('title',e.target.value);content.oninput=e=>update('content',e.target.value);el.querySelector('.delete').onclick=()=>{if(!confirm('¿Eliminar este apunte?'))return;state.notesByDate[selectedDate]=state.notesByDate[selectedDate].filter(n=>n.id!==note.id);scheduleSave();renderNotes()};group.appendChild(el)});
+      if(todos.length){const box=document.createElement('div');box.className='todo-box';box.innerHTML=`<div class="todo-title">Pendientes</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button type="button">Agregar</button></div>`;const ul=box.querySelector('ul');todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done');li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').onchange=e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave()};li.querySelector('.del').onclick=()=>{todos.splice(idx,1);scheduleSave();renderNotes()};ul.appendChild(li)});const input=box.querySelector('input[type=text]');const add=()=>{const v=input.value.trim();if(!v)return;todos.push({text:v,done:false});scheduleSave();renderNotes()};box.querySelector('button').onclick=add;input.onkeydown=e=>{if(e.key==='Enter')add()};group.appendChild(box)}
+      const add=document.createElement('div');add.className='add-note';add.innerHTML=`<button type="button">+ Agregar apunte a ${card.label}</button>`;add.querySelector('button').onclick=()=>openNoteModal(selectedDate,card.key);group.appendChild(add);container.appendChild(group);
     });
-
-    if(!container.children.length){
-      container.innerHTML = `<div class="notes-empty">No hay contenido para esta materia en esta fecha.</div>`;
-    }
+    if(!container.querySelector('.subject-group')){const empty=document.createElement('div');empty.className='notes-empty';empty.innerHTML='No hay contenido para esta fecha. <b>Agrega tu primer apunte</b> arriba.';container.appendChild(empty)}
   }
-
-  function addNote(subjectKey){
-    ensureDate(selectedDate);
-    const note = makeNote('Nuevo apunte', '', subjectKey, selectedDate);
-    state.notesByDate[selectedDate].push(note);
-    selectedSubject = subjectKey;
-    scheduleSave();
-    renderNotes();
-    requestAnimationFrame(()=>{
-      const el = document.querySelector(`[data-id="${note.id}"] .note-title`);
-      if(el){ el.focus(); el.select(); }
-    });
-  }
+  function addNote(subjectKey,date=selectedDate,title='Apunte sin título',content=''){ensureDate(date);const note=makeNote(title,content,subjectKey,date);state.notesByDate[date].push(note);selectedDate=date;selectedSubject=subjectKey;scheduleSave();renderNotes();return note}
+  const noteModal=document.getElementById('noteModal'),modalDate=document.getElementById('modalNoteDate'),modalSubject=document.getElementById('modalNoteSubject'),modalTitle=document.getElementById('modalNoteTitle'),modalContent=document.getElementById('modalNoteContent');
+  modalSubject.innerHTML=ALL_CARDS.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
+  function openNoteModal(date=selectedDate,subjectKey=SUBJECT_CARDS[0].key){modalDate.value=date;modalSubject.value=subjectKey;modalTitle.value='';modalContent.value='';noteModal.classList.add('show');noteModal.setAttribute('aria-hidden','false');setTimeout(()=>modalTitle.focus(),50)}
+  function closeNoteModal(){noteModal.classList.remove('show');noteModal.setAttribute('aria-hidden','true')}
+  document.getElementById('closeNoteModal').onclick=closeNoteModal;document.getElementById('cancelNoteModal').onclick=closeNoteModal;document.getElementById('saveNoteModal').onclick=()=>{addNote(modalSubject.value,modalDate.value||selectedDate,modalTitle.value.trim()||'Apunte sin título',modalContent.value.trim());closeNoteModal()};noteModal.onclick=e=>{if(e.target===noteModal)closeNoteModal()};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&noteModal.classList.contains('show'))closeNoteModal()});
 
   document.getElementById('prevDate').addEventListener('click', ()=>{
     selectedDate = dateShift(selectedDate,-1);
@@ -857,11 +760,7 @@ IV. Calidad y modelo de madurez`;
     selectedSubject = e.target.value;
     renderNotes();
   });
-  document.getElementById('newNoteTop').addEventListener('click', ()=>{
-    ensureDate(selectedDate);
-    const key = selectedSubject === 'all' ? SUBJECT_CARDS[0].key : selectedSubject;
-    addNote(key);
-  });
+  document.getElementById('newNoteTop').addEventListener('click', ()=>openNoteModal(selectedDate, selectedSubject === 'all' ? SUBJECT_CARDS[0].key : selectedSubject));
 
   async function initSync(){
     if(!isConfigured){
@@ -914,5 +813,15 @@ IV. Calidad y modelo de madurez`;
   initSync();
 
 </script>
+
+  <div class="note-modal" id="noteModal" aria-hidden="true"><div class="note-modal-box" role="dialog" aria-modal="true">
+    <div class="note-modal-head"><div><div class="note-modal-kicker">Nuevo apunte</div><h3>Agregar apunte</h3></div><button class="note-modal-close" id="closeNoteModal" type="button">Cerrar</button></div>
+    <div class="note-modal-grid">
+      <div class="note-field"><label>Fecha</label><input id="modalNoteDate" type="date"></div>
+      <div class="note-field"><label>Materia</label><select id="modalNoteSubject"></select></div>
+      <div class="note-field full"><label>Título</label><input id="modalNoteTitle" placeholder="Ej. Clase 2 — Fundamentos"></div>
+      <div class="note-field full"><label>Apunte</label><textarea id="modalNoteContent" placeholder="Escribe aquí lo que viste en clase..."></textarea></div>
+    </div><div class="note-modal-actions"><button id="cancelNoteModal" type="button">Cancelar</button><button id="saveNoteModal" class="primary" type="button">Guardar apunte</button></div>
+  </div></div>
 </body>
 </html>
