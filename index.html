@@ -128,52 +128,105 @@
   .block .r{ font-size:9.5px; color: var(--text-faint); margin-top:2px; }
   .block.type-free .n{ color: var(--text-dim); font-weight:500; }
 
-  /* ---------------- Notes ---------------- */
-  .notes-list{ border-top: 1px solid var(--line); }
-  .note-row{
-    display:grid; grid-template-columns: 230px 1fr; gap: 28px;
-    padding: 22px 0; border-bottom: 1px solid var(--line-soft);
-  }
-  .note-row-head{ display:flex; align-items:flex-start; gap:9px; padding-top:2px; }
-  .note-row-head i{ width:8px; height:8px; border-radius:2px; margin-top:5px; flex-shrink:0; }
-  .note-row-head span{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14px; line-height:1.35; }
-
-  .todo-list{ list-style:none; margin:0 0 10px; padding:0; }
-  .todo-list li{
-    display:flex; align-items:flex-start; gap:8px; font-size:13.5px; padding: 5px 0;
-  }
-  .todo-list input[type=checkbox]{ margin-top:3px; accent-color: var(--accent); width:14px; height:14px; flex-shrink:0; }
-  .todo-list li.done label{ text-decoration: line-through; color: var(--text-faint); }
-  .todo-list label{ cursor:pointer; flex:1; }
-  .todo-list .del{
-    border:none; background:none; color: var(--text-faint); cursor:pointer; font-size:12px; padding:0 2px;
-  }
-  .todo-list .del:hover{ color: var(--danger); }
-
-  .add-row{ display:flex; gap:8px; margin-bottom:14px; }
-  .add-row input[type=text]{
-    flex:1; font-family:'Inter', sans-serif; font-size:13px; color: var(--text);
-    border:none; border-bottom:1px solid var(--line); background:transparent; padding:6px 2px;
-  }
-  .add-row input[type=text]::placeholder{ color: var(--text-faint); }
-  .add-row input[type=text]:focus{ outline:none; border-bottom-color: var(--accent); }
-  .add-row button{
-    font-family:'IBM Plex Mono', monospace; font-size:12px; border:1px solid var(--line);
-    background:none; color: var(--text-dim); padding: 6px 12px; cursor:pointer;
-  }
-  .add-row button:hover{ border-color: var(--accent); color: var(--accent); }
-
-  .notes-label{
-    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
-    color: var(--text-faint); margin-bottom:6px;
-  }
-  textarea.apuntes{
-    width:100%; min-height: 64px; resize: vertical; font-family:'Inter', sans-serif; font-size:13px;
-    color: var(--text-dim); background: rgba(255,255,255,0.02); border:1px solid var(--line-soft);
-    padding: 10px 12px; line-height:1.5;
-  }
-  textarea.apuntes:focus{ outline:none; border-color: var(--line); color: var(--text); }
-  textarea.apuntes::placeholder{ color: var(--text-faint); }
+/* ---------------- Notes ---------------- */
+.notes-toolbar{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  flex-wrap:wrap; margin-bottom:18px;
+}
+.date-nav{ display:flex; align-items:center; gap:8px; }
+.date-nav button,.notes-toolbar button,.note-actions button{
+  font-family:'IBM Plex Mono', monospace; font-size:11px; border:1px solid var(--line);
+  background:transparent; color:var(--text-dim); padding:8px 11px; cursor:pointer;
+}
+.date-nav button:hover,.notes-toolbar button:hover,.note-actions button:hover{
+  border-color:var(--accent); color:var(--accent);
+}
+.date-current{
+  min-width:210px; text-align:center; font-family:'Space Grotesk',sans-serif;
+  font-weight:600; font-size:15px; color:var(--text);
+}
+.notes-filters{ display:flex; gap:8px; flex-wrap:wrap; }
+.notes-filters select,.note-editor input,.note-editor textarea{
+  font-family:'Inter',sans-serif; color:var(--text); background:rgba(255,255,255,0.025);
+  border:1px solid var(--line-soft);
+}
+.notes-filters select{ padding:8px 10px; font-size:12px; }
+.notes-empty{
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line-soft);
+  padding:28px 0; color:var(--text-faint); font-size:13px;
+}
+.subject-group{ border-top:1px solid var(--line); }
+.subject-group:last-child{ border-bottom:1px solid var(--line-soft); }
+.subject-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:16px 0 10px;
+}
+.subject-name{
+  display:flex; align-items:center; gap:9px; font-family:'Space Grotesk',sans-serif;
+  font-weight:600; font-size:14px;
+}
+.subject-name i{ width:8px; height:8px; border-radius:2px; background:var(--school); }
+.subject-count{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-faint); }
+.note-card{
+  margin:0 0 14px 0; padding:14px; border:1px solid var(--line-soft);
+  background:rgba(255,255,255,0.018);
+}
+.note-card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;
+}
+.note-editor{ display:grid; gap:8px; }
+.note-editor input{
+  width:100%; padding:8px 10px; font-size:13px; font-weight:600;
+}
+.note-editor textarea{
+  width:100%; min-height:90px; resize:vertical; padding:10px 12px; font-size:13px;
+  line-height:1.5;
+}
+.note-editor input:focus,.note-editor textarea:focus,.notes-filters select:focus{
+  outline:none; border-color:var(--line);
+}
+.note-meta{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--text-faint);
+}
+.note-actions{ display:flex; gap:6px; }
+.note-actions .delete:hover{ color:var(--danger); border-color:var(--danger); }
+.add-note{
+  margin:8px 0 20px; display:flex; justify-content:flex-end;
+}
+.add-note button{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; border:1px solid var(--line);
+  background:none; color:var(--text-dim); padding:8px 12px; cursor:pointer;
+}
+.add-note button:hover{ border-color:var(--accent); color:var(--accent); }
+.migration-note{
+  display:none; margin:0 0 18px; padding:10px 12px; border-left:2px solid var(--accent);
+  background:rgba(201,161,90,0.06); color:var(--text-dim); font-size:12px;
+}
+.migration-note.show{ display:block; }
+.todo-list{ list-style:none; margin:0 0 10px; padding:0; }
+.todo-list li{ display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:5px 0; }
+.todo-list input[type=checkbox]{ margin-top:3px; accent-color:var(--accent); width:14px; height:14px; flex-shrink:0; }
+.todo-list li.done label{ text-decoration:line-through; color:var(--text-faint); }
+.todo-list label{ cursor:pointer; flex:1; }
+.todo-list .del{
+  border:none; background:none; color:var(--text-faint); cursor:pointer; font-size:12px; padding:0 2px;
+}
+.todo-list .del:hover{ color:var(--danger); }
+.todo-box{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line-soft); }
+.todo-title{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-faint); text-transform:uppercase; margin-bottom:5px; }
+.add-row{ display:flex; gap:8px; margin-bottom:6px; }
+.add-row input[type=text]{
+  flex:1; font-family:'Inter',sans-serif; font-size:12px; color:var(--text);
+  border:none; border-bottom:1px solid var(--line); background:transparent; padding:6px 2px;
+}
+.add-row input[type=text]::placeholder{ color:var(--text-faint); }
+.add-row input[type=text]:focus{ outline:none; border-bottom-color:var(--accent); }
+.add-row button{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; border:1px solid var(--line);
+  background:none; color:var(--text-dim); padding:6px 10px; cursor:pointer;
+}
+.add-row button:hover{ border-color:var(--accent); color:var(--accent); }
 
   footer{
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
@@ -184,8 +237,12 @@
 
   @media (max-width: 720px){
     .wrap{ padding: 40px 18px 80px; }
-    .note-row{ grid-template-columns: 1fr; gap: 10px; }
     .cal-grid{ overflow-x:auto; display:block; }
+    .date-current{ min-width:160px; font-size:13px; }
+    .notes-toolbar{ align-items:stretch; }
+    .date-nav,.notes-filters{ width:100%; }
+    .date-nav button{ flex:1; }
+    .notes-filters select,.notes-filters button{ flex:1; min-width:0; }
   }
   :focus-visible{ outline: 1.5px solid var(--accent); outline-offset: 2px; }
 </style>
@@ -228,16 +285,25 @@
 
   <section class="section">
     <div class="section-top">
-      <div class="section-title">Materias — pendientes y apuntes</div>
+      <div class="section-title">Apuntes por fecha y materia</div>
     </div>
-    <div class="notes-list" id="notesSchool"></div>
-  </section>
 
-  <section class="section" style="margin-bottom:0">
-    <div class="section-top">
-      <div class="section-title">Trabajo &amp; personal</div>
+    <div class="notes-toolbar">
+      <div class="date-nav">
+        <button id="prevDate" type="button">← Anterior</button>
+        <div class="date-current" id="currentDateLabel"></div>
+        <button id="nextDate" type="button">Siguiente →</button>
+      </div>
+      <div class="notes-filters">
+        <select id="dateSelect" aria-label="Seleccionar fecha"></select>
+        <select id="subjectFilter" aria-label="Filtrar por materia"></select>
+        <button id="todayDate" type="button">Hoy</button>
+        <button id="newNoteTop" type="button">+ Nuevo apunte</button>
+      </div>
     </div>
-    <div class="notes-list" id="notesOther"></div>
+
+    <div class="migration-note" id="migrationNote"></div>
+    <div id="notesBySubject"></div>
   </section>
 
   <footer>
@@ -442,7 +508,7 @@
   document.getElementById('statusStats').textContent =
     `${fmtHours(computeWeeklyHours('school'))} clases · ${fmtHours(computeWeeklyHours('work'))} trabajo / semana`;
 
-  // ---------------- Notes: state + Firebase sync ----------------
+  // ---------------- Notes: dated editable state + Firebase sync ----------------
   const SUBJECT_CARDS = [
     { key:'subj_ingsoft', label:'Ingeniería de Software' },
     { key:'subj_comred', label:'Apps. Comunicaciones en Red' },
@@ -455,45 +521,24 @@
     { key:'trabajo', label:'Trabajo', color:'var(--work)' },
     { key:'nixora', label:'Nixora / Personal', color:'var(--free)' }
   ];
+  const ALL_CARDS = [...SUBJECT_CARDS, ...OTHER_CARDS];
+  const CARD_BY_KEY = Object.fromEntries(ALL_CARDS.map(c => [c.key, c]));
 
-  function renderRowShell(container, cards, colorFn){
-    cards.forEach(c=>{
-      const row = document.createElement('div');
-      row.className = 'note-row';
-      row.dataset.key = c.key;
-      row.innerHTML = `
-        <div class="note-row-head">
-          <i style="background:${colorFn ? colorFn(c) : 'var(--school)'}"></i>
-          <span>${c.label}</span>
-        </div>
-        <div class="note-row-body">
-          <ul class="todo-list"></ul>
-          <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button>Agregar</button></div>
-          <div class="notes-label">Apuntes</div>
-          <textarea class="apuntes" placeholder="Escribe recordatorios, dudas o cosas importantes de esta materia…"></textarea>
-        </div>`;
-      container.appendChild(row);
-    });
-  }
-  renderRowShell(document.getElementById('notesSchool'), SUBJECT_CARDS);
-  renderRowShell(document.getElementById('notesOther'), OTHER_CARDS, c => c.color);
+  const LEGACY_DEFAULTS = {};
+  SUBJECT_CARDS.forEach(c => LEGACY_DEFAULTS[c.key] = { todos:[], notes:'' });
+  OTHER_CARDS.forEach(c => LEGACY_DEFAULTS[c.key] = { todos:[], notes:'' });
+  LEGACY_DEFAULTS.subj_ingsoft.todos = [{ text:'Revisar tareas pendientes', done:false }];
+  LEGACY_DEFAULTS.trabajo.todos = [{ text:'Confirmar turno de la semana con el gerente', done:false }];
+  LEGACY_DEFAULTS.nixora.todos = [{ text:'Revisar pedidos pendientes en Telegram', done:false }];
 
-  function emptyEntry(){ return { todos: [], notes: '' }; }
-  const defaultState = {};
-  SUBJECT_CARDS.forEach(c => defaultState[c.key] = emptyEntry());
-  OTHER_CARDS.forEach(c => defaultState[c.key] = emptyEntry());
-  defaultState.subj_ingsoft.todos = [{ text:'Revisar tareas pendientes', done:false }];
-  defaultState.trabajo.todos = [{ text:'Confirmar turno de la semana con el gerente', done:false }];
-  defaultState.nixora.todos = [{ text:'Revisar pedidos pendientes en Telegram', done:false }];
-
-  defaultState.subj_arquitectura.todos = [
+  LEGACY_DEFAULTS.subj_arquitectura.todos = [
     { text:'Cuestionario 1 — 24 de septiembre', done:false },
     { text:'Cuestionario 2 — 29 de octubre', done:false },
     { text:'Cuestionario 3 — 3 de diciembre', done:false },
     { text:'Extraordinario — 14 de diciembre', done:false }
   ];
-  defaultState.subj_arquitectura.notes =
-`Evaluación: 60% exámenes / 40% prácticas
+  LEGACY_DEFAULTS.subj_arquitectura.notes =
+  `Evaluación: 60% exámenes / 40% prácticas
 
 Cuestionarios (40%)
 - 1° → 24 de septiembre
@@ -510,13 +555,13 @@ Notas
 - Tareas se entregan a mano
 - WhatsApp: 55 6128 7597`;
 
-  defaultState.subj_comred.todos = [
+  LEGACY_DEFAULTS.subj_comred.todos = [
     { text:'Entrega 1° — 30 de septiembre, 2026', done:false },
     { text:'Entrega 2° — 9 de noviembre, 2026', done:false },
     { text:'Entrega 3° — 10 de diciembre, 2026', done:false }
   ];
-  defaultState.subj_comred.notes =
-`Prof. Axel Ernesto Moreno Cervantes
+  LEGACY_DEFAULTS.subj_comred.notes =
+  `Prof. Axel Ernesto Moreno Cervantes
 Correo dudas: axel.epcom@gmail.com
 Correo portafolio evidencias: axel.redesyaplicaciones@gmail.com
 Horario de atención: Lun–Vie, 13:30–15:00
@@ -547,74 +592,275 @@ Recursos
 Página del curso: http://148.204.58.221/axel/aplicaciones/
 Oficina: 3105`;
 
-  defaultState.subj_ingsoft.notes =
-`Temario
+  LEGACY_DEFAULTS.subj_ingsoft.notes =
+  `Temario
 I. Fundamentos
 II. Diseño y construcción
 III. Pruebas de software
 IV. Calidad y modelo de madurez`;
 
-  let state = JSON.parse(JSON.stringify(defaultState));
+  function emptyDatedState(){
+    return { version:2, notesByDate:{}, todosByDate:{} };
+  }
+
+  const LEGACY_DATE = '2026-08-24';
+  const todayISO = () => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  };
+
+  function makeNote(title, content, subjectKey, date){
+    return {
+      id: 'note_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8),
+      subjectKey, date, title: title || 'Apunte sin título', content: content || '',
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    };
+  }
+
+  function legacyToDatedState(legacy){
+    const migrated = emptyDatedState();
+    migrated.notesByDate[LEGACY_DATE] = [];
+    migrated.todosByDate[LEGACY_DATE] = {};
+
+    ALL_CARDS.forEach(card=>{
+      const item = legacy?.[card.key] || LEGACY_DEFAULTS[card.key] || {todos:[],notes:''};
+      const todos = Array.isArray(item.todos) ? item.todos : [];
+      migrated.todosByDate[LEGACY_DATE][card.key] = todos;
+      if(item.notes && String(item.notes).trim()){
+        migrated.notesByDate[LEGACY_DATE].push(
+          makeNote('Apuntes generales', String(item.notes), card.key, LEGACY_DATE)
+        );
+      }
+    });
+    return migrated;
+  }
+
+  function normalizeDatedState(raw){
+    if(!raw || typeof raw !== 'object') return emptyDatedState();
+    if(raw.version === 2 && raw.notesByDate && raw.todosByDate) return raw;
+    return legacyToDatedState(raw);
+  }
+
+  let state = legacyToDatedState(LEGACY_DEFAULTS);
+  let selectedDate = LEGACY_DATE;
+  let selectedSubject = 'all';
   let docRef = null;
   const syncStatus = document.getElementById('syncStatus');
+  const migrationNote = document.getElementById('migrationNote');
   let saveTimer = null;
+
   function scheduleSave(){
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveState, 500);
   }
+
   function saveState(){
     if(docRef) docRef.set(state).catch(e => console.error('Error al guardar en Firebase:', e));
   }
 
+  function formatDateLong(iso){
+    const d = new Date(iso + 'T12:00:00');
+    return new Intl.DateTimeFormat('es-MX',{
+      weekday:'long', day:'numeric', month:'long', year:'numeric'
+    }).format(d).replace(/^./, s=>s.toUpperCase());
+  }
+
+  function dateShift(iso, delta){
+    const d = new Date(iso + 'T12:00:00');
+    d.setDate(d.getDate() + delta);
+    return d.toISOString().slice(0,10);
+  }
+
+  function ensureDate(date){
+    if(!state.notesByDate[date]) state.notesByDate[date] = [];
+    if(!state.todosByDate[date]) state.todosByDate[date] = {};
+  }
+
+  function getDates(){
+    const dates = new Set(Object.keys(state.notesByDate || {}));
+    Object.keys(state.todosByDate || {}).forEach(d => dates.add(d));
+    dates.add(todayISO());
+    dates.add(LEGACY_DATE);
+    return [...dates].sort((a,b)=>b.localeCompare(a));
+  }
+
+  function populateFilters(){
+    const dateSelect = document.getElementById('dateSelect');
+    const subjectFilter = document.getElementById('subjectFilter');
+    const dates = getDates();
+    dateSelect.innerHTML = dates.map(d=>`<option value="${d}">${formatDateLong(d)}</option>`).join('');
+    dateSelect.value = selectedDate;
+
+    subjectFilter.innerHTML =
+      `<option value="all">Todas las materias</option>` +
+      ALL_CARDS.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
+    subjectFilter.value = selectedSubject;
+  }
+
   function renderNotes(){
-    document.querySelectorAll('.note-row').forEach(row=>{
-      const key = row.dataset.key;
-      if(!state[key]) state[key] = emptyEntry();
-      const ul = row.querySelector('.todo-list');
-      ul.innerHTML = '';
-      state[key].todos.forEach((item, idx)=>{
-        const li = document.createElement('li');
-        if(item.done) li.classList.add('done');
-        const id = key + '-' + idx + '-' + Math.random().toString(36).slice(2,6);
-        li.innerHTML = `<input type="checkbox" id="${id}" ${item.done ? 'checked' : ''}><label for="${id}"></label><button class="del" title="Eliminar">✕</button>`;
-        li.querySelector('label').textContent = item.text;
-        li.querySelector('input').addEventListener('change', e=>{
-          state[key].todos[idx].done = e.target.checked;
-          li.classList.toggle('done', e.target.checked);
+    ensureDate(selectedDate);
+    populateFilters();
+
+    document.getElementById('currentDateLabel').textContent = formatDateLong(selectedDate);
+    const container = document.getElementById('notesBySubject');
+    container.innerHTML = '';
+
+    const notes = (state.notesByDate[selectedDate] || [])
+      .filter(n => selectedSubject === 'all' || n.subjectKey === selectedSubject);
+
+    const visibleCards = selectedSubject === 'all'
+      ? ALL_CARDS
+      : ALL_CARDS.filter(c => c.key === selectedSubject);
+
+    if(!notes.length && visibleCards.every(c => !(state.todosByDate[selectedDate]?.[c.key] || []).length)){
+      container.innerHTML = `<div class="notes-empty">No hay apuntes ni pendientes para esta fecha. Usa <b>+ Nuevo apunte</b> para comenzar.</div>`;
+      return;
+    }
+
+    visibleCards.forEach(card=>{
+      const cardNotes = notes.filter(n=>n.subjectKey === card.key);
+      const todos = state.todosByDate[selectedDate]?.[card.key] || [];
+      if(!cardNotes.length && !todos.length) return;
+
+      const group = document.createElement('div');
+      group.className = 'subject-group';
+      const color = card.color || 'var(--school)';
+      group.innerHTML = `
+        <div class="subject-head">
+          <div class="subject-name"><i style="background:${color}"></i>${card.label}</div>
+          <div class="subject-count">${cardNotes.length} apunte${cardNotes.length===1?'':'s'} · ${todos.length} pendiente${todos.length===1?'':'s'}</div>
+        </div>
+      `;
+
+      cardNotes.forEach(note=>{
+        const cardEl = document.createElement('article');
+        cardEl.className = 'note-card';
+        cardEl.dataset.id = note.id;
+        cardEl.innerHTML = `
+          <div class="note-card-head">
+            <div class="note-meta">APUNTE · <span class="updated"></span></div>
+            <div class="note-actions">
+              <button type="button" class="delete">Eliminar</button>
+            </div>
+          </div>
+          <div class="note-editor">
+            <input class="note-title" type="text" value="">
+            <textarea class="note-content" placeholder="Escribe aquí el apunte..."></textarea>
+          </div>
+        `;
+        cardEl.querySelector('.note-title').value = note.title || '';
+        cardEl.querySelector('.note-content').value = note.content || '';
+        cardEl.querySelector('.updated').textContent =
+          'actualizado ' + new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt || note.createdAt || Date.now()));
+
+        const update = (field, value)=>{
+          note[field] = value;
+          note.updatedAt = new Date().toISOString();
+          cardEl.querySelector('.updated').textContent =
+            'actualizado ' + new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt));
           scheduleSave();
-        });
-        li.querySelector('.del').addEventListener('click', ()=>{
-          state[key].todos.splice(idx,1);
+        };
+        cardEl.querySelector('.note-title').addEventListener('input', e=>update('title', e.target.value));
+        cardEl.querySelector('.note-content').addEventListener('input', e=>update('content', e.target.value));
+        cardEl.querySelector('.delete').addEventListener('click', ()=>{
+          if(!confirm('¿Eliminar este apunte?')) return;
+          state.notesByDate[selectedDate] = state.notesByDate[selectedDate].filter(n=>n.id !== note.id);
           scheduleSave();
           renderNotes();
         });
-        ul.appendChild(li);
+        group.appendChild(cardEl);
       });
-      const textarea = row.querySelector('.apuntes');
-      if(document.activeElement !== textarea) textarea.value = state[key].notes || '';
+
+      if(todos.length){
+        const todoBox = document.createElement('div');
+        todoBox.className = 'todo-box';
+        todoBox.innerHTML = `<div class="todo-title">Pendientes de ${formatDateLong(selectedDate)}</div><ul class="todo-list"></ul>
+          <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button type="button">Agregar</button></div>`;
+        const ul = todoBox.querySelector('.todo-list');
+        todos.forEach((item, idx)=>{
+          const li = document.createElement('li');
+          if(item.done) li.classList.add('done');
+          li.innerHTML = `<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button" title="Eliminar">✕</button>`;
+          li.querySelector('label').textContent = item.text;
+          li.querySelector('input').addEventListener('change', e=>{
+            item.done = e.target.checked;
+            li.classList.toggle('done', item.done);
+            scheduleSave();
+          });
+          li.querySelector('.del').addEventListener('click', ()=>{
+            todos.splice(idx,1);
+            scheduleSave();
+            renderNotes();
+          });
+          ul.appendChild(li);
+        });
+        const input = todoBox.querySelector('input[type=text]');
+        const add = ()=>{
+          const val = input.value.trim();
+          if(!val) return;
+          todos.push({text:val,done:false});
+          scheduleSave();
+          renderNotes();
+        };
+        todoBox.querySelector('button').addEventListener('click', add);
+        input.addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
+        group.appendChild(todoBox);
+      }
+
+      const add = document.createElement('div');
+      add.className = 'add-note';
+      add.innerHTML = `<button type="button">+ Agregar apunte a ${card.label}</button>`;
+      add.querySelector('button').addEventListener('click', ()=>addNote(card.key));
+      group.appendChild(add);
+      container.appendChild(group);
+    });
+
+    if(!container.children.length){
+      container.innerHTML = `<div class="notes-empty">No hay contenido para esta materia en esta fecha.</div>`;
+    }
+  }
+
+  function addNote(subjectKey){
+    ensureDate(selectedDate);
+    const note = makeNote('Nuevo apunte', '', subjectKey, selectedDate);
+    state.notesByDate[selectedDate].push(note);
+    selectedSubject = subjectKey;
+    scheduleSave();
+    renderNotes();
+    requestAnimationFrame(()=>{
+      const el = document.querySelector(`[data-id="${note.id}"] .note-title`);
+      if(el){ el.focus(); el.select(); }
     });
   }
 
-  document.querySelectorAll('.note-row').forEach(row=>{
-    const key = row.dataset.key;
-    const input = row.querySelector('.add-row input');
-    const button = row.querySelector('.add-row button');
-    const submit = ()=>{
-      const val = input.value.trim();
-      if(!val) return;
-      state[key].todos.push({ text: val, done:false });
-      scheduleSave();
-      renderNotes();
-      input.value = '';
-    };
-    button.addEventListener('click', submit);
-    input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
-
-    const textarea = row.querySelector('.apuntes');
-    textarea.addEventListener('input', e=>{
-      state[key].notes = e.target.value;
-      scheduleSave();
-    });
+  document.getElementById('prevDate').addEventListener('click', ()=>{
+    selectedDate = dateShift(selectedDate,-1);
+    renderNotes();
+  });
+  document.getElementById('nextDate').addEventListener('click', ()=>{
+    selectedDate = dateShift(selectedDate,1);
+    renderNotes();
+  });
+  document.getElementById('todayDate').addEventListener('click', ()=>{
+    selectedDate = todayISO();
+    selectedSubject = 'all';
+    renderNotes();
+  });
+  document.getElementById('dateSelect').addEventListener('change', e=>{
+    selectedDate = e.target.value;
+    renderNotes();
+  });
+  document.getElementById('subjectFilter').addEventListener('change', e=>{
+    selectedSubject = e.target.value;
+    renderNotes();
+  });
+  document.getElementById('newNoteTop').addEventListener('click', ()=>{
+    ensureDate(selectedDate);
+    const key = selectedSubject === 'all' ? SUBJECT_CARDS[0].key : selectedSubject;
+    addNote(key);
   });
 
   async function initSync(){
@@ -624,22 +870,39 @@ IV. Calidad y modelo de madurez`;
       renderNotes();
       return;
     }
+
     try{
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
       docRef = db.collection('planner').doc('emiliano');
       const snap = await docRef.get();
+
       if(snap.exists){
         const loaded = snap.data();
-        Object.keys(defaultState).forEach(k => { if(!loaded[k]) loaded[k] = emptyEntry(); });
-        state = loaded;
-      } else {
+        const wasLegacy = loaded?.version !== 2;
+        state = normalizeDatedState(loaded);
+        if(wasLegacy){
+          await docRef.set(state);
+          migrationNote.textContent = 'Los apuntes existentes fueron reorganizados automáticamente en el 24 de agosto de 2026 y ahora se guardan por fecha y materia.';
+          migrationNote.classList.add('show');
+        }
+      }else{
+        state = legacyToDatedState(LEGACY_DEFAULTS);
         await docRef.set(state);
+        migrationNote.textContent = 'Los apuntes iniciales se organizaron en el 24 de agosto de 2026 y quedaron listos para editarse.';
+        migrationNote.classList.add('show');
       }
+
       renderNotes();
       syncStatus.textContent = 'Sincronizado con Firebase ✓';
       syncStatus.classList.add('ok');
-      docRef.onSnapshot(snap => { if(snap.exists){ state = snap.data(); renderNotes(); } });
+
+      docRef.onSnapshot(snap=>{
+        if(snap.exists){
+          state = normalizeDatedState(snap.data());
+          renderNotes();
+        }
+      });
     }catch(e){
       console.error('No se pudo conectar a Firebase:', e);
       document.getElementById('configBanner').classList.add('show');
@@ -649,6 +912,7 @@ IV. Calidad y modelo de madurez`;
   }
 
   initSync();
+
 </script>
 </body>
 </html>
