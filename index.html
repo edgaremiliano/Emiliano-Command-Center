@@ -683,25 +683,39 @@ IV. Calidad y modelo de madurez`;
   const migrationNote = document.getElementById('migrationNote');
   let saveTimer = null;
   let localSaveInProgress = false;
+  let saveQueue = Promise.resolve();
+  let saveRevision = 0;
 
   function scheduleSave(){
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(saveState, 500);
+    saveTimer = setTimeout(()=>saveState(), 500);
   }
 
   function saveState(){
-    if(!docRef) return Promise.resolve();
+    if(!docRef) return Promise.resolve(false);
+    clearTimeout(saveTimer);
+    const payload = JSON.parse(JSON.stringify(state));
+    const revision = ++saveRevision;
     syncStatus.textContent = 'Guardando…';
+    syncStatus.classList.remove('ok');
     localSaveInProgress = true;
-    return docRef.set(state).then(()=>{
-      syncStatus.textContent = 'Sincronizado con Firebase ✓';
-      syncStatus.classList.add('ok');
-      setTimeout(()=>localSaveInProgress=false,250);
+
+    saveQueue = saveQueue.then(()=>docRef.set(payload)).then(()=>{
+      if(revision === saveRevision){
+        syncStatus.textContent = 'Sincronizado con Firebase ✓';
+        syncStatus.classList.add('ok');
+      }
+      return true;
     }).catch(e=>{
       console.error('Error al guardar en Firebase:',e);
-      syncStatus.textContent = 'Error al guardar';
-      localSaveInProgress = false;
+      syncStatus.textContent = 'Error al guardar · Reintentar';
+      syncStatus.classList.remove('ok');
+      return false;
+    }).finally(()=>{
+      // Only release snapshot protection after the complete write queue is done.
+      if(revision === saveRevision) localSaveInProgress = false;
     });
+    return saveQueue;
   }
 
   function formatDateLong(iso){
@@ -806,7 +820,7 @@ IV. Calidad y modelo de madurez`;
       if(academicTab==='study'){
         const box=document.createElement('div');box.className='study-box';
         box.innerHTML='<div class="study-title">Acércate al tema · repasa, profundiza o practica</div>'+(!studies.length?'<div class="study-empty">Todavía no tienes temas de estudio para esta materia.</div>':'')+
-          '<div class="study-hint">Tip: 30 min es un bloque recomendado; 60 min es una sesión intensiva. El tiempo queda guardado junto con tu tema.</div>'+ 
+          '<div class="study-hint">Tip: <b>30 min</b> es el bloque recomendado (25 min de estudio + 5 min de descanso). <b>60 min</b> es una sesión intensiva (25 + 5 + 25 + 5). El tiempo queda guardado junto con tu tema.</div>'+ 
           '<ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select class="study-level-select"><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><select class="study-duration-select"><option value="15">15 min · rápido</option><option value="30" selected>30 min · recomendado</option><option value="45">45 min · completo</option><option value="60">60 min · intensivo</option><option value="90">90 min · profundo</option></select><button type="button" class="study-save">＋ Guardar estudio</button></div>';
         const ul=box.querySelector('ul');
         studies.forEach((item,idx)=>{
@@ -819,14 +833,25 @@ IV. Calidad y modelo de madurez`;
           li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);saveState();renderNotes()});
           ul.appendChild(li);
         });
-        const inp=box.querySelector('input'),level=box.querySelector('.study-level-select'),duration=box.querySelector('.study-duration-select');
-        const add=()=>{
-          const v=inp.value.trim(); if(!v)return;
+        const inp=box.querySelector('input'),level=box.querySelector('.study-level-select'),duration=box.querySelector('.study-duration-select'),saveBtn=box.querySelector('.study-save');
+        const add=async()=>{
+          const v=inp.value.trim(); if(!v || saveBtn.disabled)return;
           ensureDate(selectedDate);
-          studies.push({id:'study_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,level:level.value,duration:Number(duration.value),done:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+          const item={id:'study_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,level:level.value,duration:Number(duration.value),done:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+          studies.push(item);
           inp.value='';
-          saveState();
+          saveBtn.disabled=true;
+          saveBtn.textContent='Guardando…';
           renderNotes();
+          // Re-find the new button after render and keep the user-facing state clear.
+          const currentBox=document.querySelector(`.subject-group .study-box`);
+          if(currentBox){ const currentBtn=currentBox.querySelector('.study-save'); if(currentBtn){currentBtn.disabled=true;currentBtn.textContent='Guardando…';} }
+          const ok=await saveState();
+          renderNotes();
+          if(ok){
+            const latestBox=[...document.querySelectorAll('.study-box')].find(x=>x.querySelector('.study-main strong')?.textContent===item.text) || null;
+            if(latestBox){ const latestBtn=latestBox.querySelector('.study-save'); if(latestBtn){latestBtn.disabled=false;latestBtn.textContent='＋ Guardar estudio';} }
+          }
         };
         box.querySelector('.study-save').addEventListener('click',add);
         inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});
@@ -902,6 +927,8 @@ IV. Calidad y modelo de madurez`;
       syncStatus.classList.add('ok');
 
       docRef.onSnapshot(snap=>{
+        // Firestore can emit the previous server snapshot while a local write is still being committed.
+        // Never overwrite the local state during that window.
         if(snap.exists && !localSaveInProgress){
           state = normalizeDatedState(snap.data());
           renderNotes();
