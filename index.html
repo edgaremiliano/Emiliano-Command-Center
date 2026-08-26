@@ -279,6 +279,43 @@
     .notes-filters select,.notes-filters button{ flex:1; min-width:0; }
   }
   :focus-visible{ outline: 1.5px solid var(--accent); outline-offset: 2px; }
+
+  /* ===== Command Center académico ===== */
+  .today-panel{margin:-2px 0 28px;border:1px solid var(--line);background:rgba(255,255,255,.018);padding:16px}
+  .today-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .today-kicker,.mini-kicker{font:9px 'IBM Plex Mono',monospace;color:var(--accent);text-transform:uppercase;letter-spacing:.12em}
+  .today-title{font:20px 'Space Grotesk',sans-serif;font-weight:600;margin-top:4px}
+  .today-date{font:10px 'IBM Plex Mono',monospace;color:var(--text-faint)}
+  .today-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px}
+  .today-card{border-top:1px solid var(--line-soft);padding-top:10px;min-width:0}
+  .today-card h4{margin:0 0 8px;font:10px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase}
+  .today-list{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+  .today-list li{font-size:11px;color:var(--text-dim);line-height:1.35}
+  .today-list li b{color:var(--text);font-weight:600}
+  .today-empty{font-size:11px;color:var(--text-faint)}
+  .week-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+  .week-stat{border:1px solid var(--line-soft);padding:10px 11px;background:rgba(255,255,255,.012)}
+  .week-stat strong{display:block;font:18px 'Space Grotesk',sans-serif;color:var(--text)}
+  .week-stat span{display:block;margin-top:3px;font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase}
+  .academic-search{width:100%;box-sizing:border-box;margin:0 0 12px;padding:9px 11px;background:rgba(255,255,255,.025);border:1px solid var(--line-soft);color:var(--text);font:12px 'Inter',sans-serif}
+  .academic-search:focus{outline:none;border-color:var(--accent)}
+  .todo-priority{font:9px 'IBM Plex Mono',monospace;padding:2px 5px;border:1px solid var(--line-soft);color:var(--text-faint);white-space:nowrap}
+  .todo-priority.high{border-color:var(--danger);color:var(--danger)}
+  .todo-priority.medium{border-color:var(--accent);color:var(--accent)}
+  .todo-priority.low{color:var(--text-faint)}
+  .pending-priority{font:10px 'IBM Plex Mono',monospace;background:rgba(255,255,255,.025);color:var(--text-dim);border:1px solid var(--line-soft);padding:7px}
+  .study-status-select{font:9px 'IBM Plex Mono',monospace;background:transparent;color:var(--text-dim);border:1px solid var(--line-soft);padding:3px 5px}
+  .study-status-select:focus{outline:none;border-color:var(--accent)}
+  .sync-pulse{display:inline-flex;align-items:center;gap:6px}
+  .sync-pulse::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+  @media(max-width:800px){.today-grid{grid-template-columns:1fr}.week-summary{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){
+    .cal-grid{grid-template-columns:42px repeat(5,minmax(112px,1fr));overflow-x:auto}
+    .cal-grid .day-head{font-size:11px}.today-head{flex-direction:column}.notes-toolbar{gap:9px}
+    .date-current{min-width:0;flex:1;font-size:13px}.notes-filters{width:100%}
+    .notes-filters select,.notes-filters button{flex:1;min-width:0}.week-summary{grid-template-columns:repeat(2,1fr)}
+  }
+
 </style>
 </head>
 <body>
@@ -315,6 +352,8 @@
     <div class="cal-grid" id="calGrid"></div>
   </section>
 
+  <section class="today-panel" id="todayPanel"></section>
+
   <section class="section">
     <div class="section-top">
       <div class="section-title">Apuntes por fecha y materia</div>
@@ -333,6 +372,7 @@
         <button id="newNoteTop" type="button">+ Nuevo apunte</button>
       </div>
     </div>
+    <input id="academicSearch" class="academic-search" type="search" placeholder="⌕ Buscar apuntes, pendientes o temas de estudio…" autocomplete="off">
 
     <div class="migration-note" id="migrationNote"></div>
     <div id="notesBySubject"></div>
@@ -765,11 +805,50 @@ IV. Calidad y modelo de madurez`;
   }
 
   let academicTab = 'notes';
+  let academicSearch = '';
+
+  function escapeHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+
+  function renderTodayPanel(){
+    const panel=document.getElementById('todayPanel');
+    if(!panel) return;
+    const date=todayISO();
+    const dayKey=JS_DAY_TO_KEY[new Date(date+'T12:00:00').getDay()];
+    const schedule=SCHEDULE[dayKey]||[];
+    const todos=Object.values(state.todosByDate?.[date]||{}).flat();
+    const studies=Object.values(state.studyByDate?.[date]||{}).flat();
+    const notes=state.notesByDate?.[date]||[];
+    const pending=todos.filter(x=>!x.done);
+    const pendingStudy=studies.filter(x=>(x.status||(!x.done?'pending':'completed'))!=='completed');
+    panel.innerHTML=`<div class="today-head"><div><div class="today-kicker">Tu día</div><div class="today-title">Hoy · ${escapeHtml(formatDateLong(date))}</div></div><div class="today-date">${notes.length} apuntes · ${pending.length} pendientes · ${pendingStudy.length} estudios</div></div>
+      <div class="today-grid">
+        <div class="today-card"><h4>Horario</h4><ul class="today-list">${schedule.map(x=>`<li><b>${x.start}–${x.end}</b> · ${escapeHtml(x.name)}</li>`).join('')||'<li class="today-empty">Sin clases programadas.</li>'}</ul></div>
+        <div class="today-card"><h4>Pendientes</h4><ul class="today-list">${pending.slice(0,5).map(x=>`<li>☐ ${escapeHtml(x.text)}</li>`).join('')||'<li class="today-empty">No tienes pendientes para hoy.</li>'}</ul></div>
+        <div class="today-card"><h4>Estudio</h4><ul class="today-list">${pendingStudy.slice(0,5).map(x=>`<li>🎯 ${escapeHtml(x.text)} · ${Number(x.duration||30)} min</li>`).join('')||'<li class="today-empty">No tienes sesiones de estudio para hoy.</li>'}</ul></div>
+      </div>`;
+  }
+
+  function renderWeekSummary(){
+    const dates=[]; const base=new Date(todayISO()+'T12:00:00');
+    const monday=new Date(base); const offset=(monday.getDay()+6)%7; monday.setDate(monday.getDate()-offset);
+    for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);dates.push(d.toISOString().slice(0,10));}
+    const notes=dates.reduce((n,d)=>n+(state.notesByDate?.[d]?.length||0),0);
+    const todos=dates.flatMap(d=>Object.values(state.todosByDate?.[d]||{}).flat());
+    const studies=dates.flatMap(d=>Object.values(state.studyByDate?.[d]||{}).flat());
+    const done=todos.filter(x=>x.done).length;
+    const minutes=studies.filter(x=>x.done || x.status==='completed').reduce((n,x)=>n+Number(x.duration||0),0);
+    return `<div class="week-summary"><div class="week-stat"><strong>${notes}</strong><span>Apuntes esta semana</span></div><div class="week-stat"><strong>${todos.length}</strong><span>Pendientes</span></div><div class="week-stat"><strong>${done}</strong><span>Pendientes completados</span></div><div class="week-stat"><strong>${Math.floor(minutes/60)}h ${minutes%60}m</strong><span>Estudio completado</span></div></div>`;
+  }
+
 
   function renderNotes(){
     ensureDate(selectedDate); populateFilters();
     document.getElementById('currentDateLabel').textContent = formatDateLong(selectedDate);
     const container=document.getElementById('notesBySubject'); container.innerHTML='';
+    renderTodayPanel();
+    container.insertAdjacentHTML('beforeend', renderWeekSummary());
     const allNotes=state.notesByDate[selectedDate]||[];
     const allTodos=Object.values(state.todosByDate[selectedDate]||{}).reduce((a,b)=>a+b.length,0);
     const pending=Object.values(state.todosByDate[selectedDate]||{}).flat().filter(x=>!x.done).length;
@@ -817,7 +896,7 @@ IV. Calidad y modelo de madurez`;
         ensureDate(selectedDate);
         if(!state.studyByDate[selectedDate]) state.studyByDate[selectedDate]={};
         if(!state.studyByDate[selectedDate][qSubject.value]) state.studyByDate[selectedDate][qSubject.value]=[];
-        const item={id:'study_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,level:qLevel.value,duration:Number(qDuration.value),done:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+        const item={id:'study_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,level:qLevel.value,duration:Number(qDuration.value),done:false,status:'pending',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
         state.studyByDate[selectedDate][qSubject.value].push(item);
         qBtn.disabled=true; qBtn.textContent='Guardando…'; qStatus.textContent='Guardando en Firebase…';
         renderNotes();
@@ -833,9 +912,9 @@ IV. Calidad y modelo de madurez`;
       qText.addEventListener('keydown',e=>{if(e.key==='Enter')qBtn.click()});
     }
     visibleCards.forEach(card=>{
-      const cardNotes=allNotes.filter(n=>n.subjectKey===card.key);
-      const todos=state.todosByDate[selectedDate]?.[card.key]||[];
-      const studies=state.studyByDate[selectedDate]?.[card.key]||[];
+      const cardNotes=allNotes.filter(n=>n.subjectKey===card.key && (!academicSearch || `${n.title||''} ${n.content||''}`.toLowerCase().includes(academicSearch)));
+      const todos=(state.todosByDate[selectedDate]?.[card.key]||[]).filter(t=>!academicSearch || String(t.text||'').toLowerCase().includes(academicSearch));
+      const studies=(state.studyByDate[selectedDate]?.[card.key]||[]).filter(t=>!academicSearch || `${t.text||''} ${t.level||''}`.toLowerCase().includes(academicSearch));
       if(academicTab==='notes'&&!cardNotes.length)return;
       // En Pendientes y Estudio mostramos la materia aunque esté vacía para que siempre exista un botón de alta.
       if(academicTab==='todos'&&!todos.length && selectedSubject !== 'all') { /* se mantiene visible */ }
@@ -860,14 +939,15 @@ IV. Calidad y modelo de madurez`;
       }
 
       if(academicTab==='todos'){
-        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><button type="button" class="add-pending">＋ Agregar pendiente</button></div>';
-        const ul=box.querySelector('ul'); todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done');li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{todos.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
+        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><select class="pending-priority"><option value="high">🔴 Alta</option><option value="medium" selected>🟡 Media</option><option value="low">⚪ Baja</option></select><button type="button" class="add-pending">＋ Agregar pendiente</button></div>';
+        const ul=box.querySelector('ul'); todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done'); const pr=item.priority||'medium'; li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><span class="todo-priority ${pr}">${pr==='high'?'Alta':pr==='low'?'Baja':'Media'}</span><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{todos.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
         const inp=box.querySelector('input[type=text]');
+        const priority=box.querySelector('.pending-priority');
         const addBtn=box.querySelector('.add-pending');
         const add=async()=>{
           const v=inp.value.trim();
           if(!v || addBtn.disabled)return;
-          todos.push({text:v,done:false});
+          todos.push({text:v,done:false,priority:priority.value});
           inp.value='';
           addBtn.disabled=true;
           addBtn.textContent='Guardando…';
@@ -891,11 +971,11 @@ IV. Calidad y modelo de madurez`;
         const ul=box.querySelector('ul');
         studies.forEach((item,idx)=>{
           const li=document.createElement('li');li.className='study-item';
-          li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><div class="study-main"><strong></strong><small>${item.done?'Completado':'Pendiente de estudio'}</small></div><span class="study-level"></span><span class="study-duration"></span><button class="study-del" type="button">✕</button>`;
+          const status=item.status || (item.done?'completed':'pending'); li.innerHTML=`<div class="study-main"><strong></strong><small>${status==='completed'?'Completado':status==='progress'?'En progreso':'Pendiente de estudio'}</small></div><span class="study-level"></span><span class="study-duration"></span><select class="study-status-select"><option value="pending" ${status==='pending'?'selected':''}>Pendiente</option><option value="progress" ${status==='progress'?'selected':''}>En progreso</option><option value="completed" ${status==='completed'?'selected':''}>Completado</option></select><button class="study-del" type="button">✕</button>`;
           li.querySelector('strong').textContent=item.text;
           li.querySelector('.study-level').textContent=item.level||'Repasar';
           li.querySelector('.study-duration').textContent=(item.duration||30)+' min';
-          li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;saveState();renderNotes()});
+          li.querySelector('.study-status-select').addEventListener('change',e=>{item.status=e.target.value;item.done=e.target.value==='completed';item.updatedAt=new Date().toISOString();saveState();renderNotes()});
           li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);saveState();renderNotes()});
           ul.appendChild(li);
         });
@@ -951,6 +1031,7 @@ IV. Calidad y modelo de madurez`;
     selectedSubject = e.target.value;
     renderNotes();
   });
+  document.getElementById('academicSearch').addEventListener('input', e=>{ academicSearch=e.target.value.trim().toLowerCase(); renderNotes(); });
   document.getElementById('newNoteTop').addEventListener('click', ()=>{
     ensureDate(selectedDate);
     const key = selectedSubject === 'all' ? SUBJECT_CARDS[0].key : selectedSubject;
