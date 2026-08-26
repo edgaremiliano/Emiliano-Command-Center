@@ -237,7 +237,8 @@
   .academic-tab{border:0;border-bottom:2px solid transparent;background:none;color:var(--text-faint);padding:9px 14px;cursor:pointer;font:10px 'IBM Plex Mono',monospace;white-space:nowrap}
   .academic-tab:hover,.academic-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
   .study-box{margin:10px 0 20px;padding:12px 14px;border:1px solid var(--line-soft);background:rgba(255,255,255,.012)}
-  .study-title{font:10px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase;margin-bottom:8px}
+  .study-empty{padding:10px 0;color:var(--text-faint);font-size:11px;}
+.study-title{font:10px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase;margin-bottom:8px}
   .study-list{list-style:none;margin:0;padding:0}
   .study-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-top:1px solid var(--line-soft)}
   .study-item:first-child{border-top:0}
@@ -761,8 +762,9 @@ IV. Calidad y modelo de madurez`;
       const todos=state.todosByDate[selectedDate]?.[card.key]||[];
       const studies=state.studyByDate[selectedDate]?.[card.key]||[];
       if(academicTab==='notes'&&!cardNotes.length)return;
-      if(academicTab==='todos'&&!todos.length)return;
-      if(academicTab==='study'&&!studies.length)return;
+      // En Pendientes y Estudio mostramos la materia aunque esté vacía para que siempre exista un botón de alta.
+      if(academicTab==='todos'&&!todos.length && selectedSubject !== 'all') { /* se mantiene visible */ }
+      if(academicTab==='study'&&!studies.length && selectedSubject !== 'all') { /* se mantiene visible */ }
       rendered=true;
       const group=document.createElement('div'); group.className='subject-group';
       const color=card.color||'var(--school)';
@@ -783,13 +785,13 @@ IV. Calidad y modelo de madurez`;
       }
 
       if(academicTab==='todos'){
-        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><button type="button">Agregar</button></div>';
+        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><button type="button">＋ Agregar pendiente</button></div>';
         const ul=box.querySelector('ul'); todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done');li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{todos.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
         const inp=box.querySelector('input[type=text]');const add=()=>{const v=inp.value.trim();if(!v)return;todos.push({text:v,done:false});scheduleSave();renderNotes()};box.querySelector('button').addEventListener('click',add);inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});group.appendChild(box);
       }
 
       if(academicTab==='study'){
-        const box=document.createElement('div');box.className='study-box';box.innerHTML='<div class="study-title">Acércate al tema · repasa, profundiza o practica</div><ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><button type="button">Agregar</button></div>';
+        const box=document.createElement('div');box.className='study-box';box.innerHTML='<div class="study-title">Acércate al tema · repasa, profundiza o practica</div>'+(!studies.length?'<div class="study-empty">Todavía no tienes temas de estudio para esta materia.</div>':'')+'<ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><button type="button">＋ Agregar estudio</button></div>';
         const ul=box.querySelector('ul');studies.forEach((item,idx)=>{const li=document.createElement('li');li.className='study-item';li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><div class="study-main"><strong></strong><small>${item.done?'Completado':'Pendiente de estudio'}</small></div><span class="study-level"></span><button class="study-del" type="button">✕</button>`;li.querySelector('strong').textContent=item.text;li.querySelector('.study-level').textContent=item.level||'Repasar';li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;scheduleSave();renderNotes()});li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
         const inp=box.querySelector('input'),sel=box.querySelector('select');const add=()=>{const v=inp.value.trim();if(!v)return;studies.push({text:v,level:sel.value,done:false});scheduleSave();renderNotes()};box.querySelector('button').addEventListener('click',add);inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});group.appendChild(box);
       }
