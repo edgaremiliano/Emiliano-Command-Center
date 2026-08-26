@@ -246,13 +246,13 @@
   .study-main{flex:1;min-width:0}
   .study-main strong{display:block;font-size:12px;font-weight:600}
   .study-main small{display:block;margin-top:2px;color:var(--text-faint);font-size:10px}
-  .study-level{font:9px 'IBM Plex Mono',monospace;color:var(--accent);white-space:nowrap;padding-top:2px}
+  .study-level{font:9px 'IBM Plex Mono',monospace;color:var(--accent);white-space:nowrap;padding-top:2px}.study-duration{font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);white-space:nowrap;padding-top:2px}.study-main small{line-height:1.35}
   .study-del{border:0;background:none;color:var(--text-faint);cursor:pointer}
   .study-del:hover{color:var(--danger)}
   .section-add{display:flex;gap:8px;margin-top:8px}
   .section-add input{flex:1;min-width:0;background:transparent;color:var(--text);border:0;border-bottom:1px solid var(--line);padding:7px 2px;font:12px 'Inter',sans-serif}
   .section-add input:focus{outline:none;border-bottom-color:var(--accent)}
-  .section-add select,.section-add button{border:1px solid var(--line);background:transparent;color:var(--text-dim);padding:7px 9px;font:10px 'IBM Plex Mono',monospace}
+  .section-add select,.section-add button{border:1px solid var(--line);background:transparent;color:var(--text-dim);padding:7px 9px;font:10px 'IBM Plex Mono',monospace}.section-add .study-save{border-color:var(--accent);color:var(--accent)}.study-hint{margin:5px 0 10px;color:var(--text-faint);font-size:10px;line-height:1.4}
   .section-add button:hover{border-color:var(--accent);color:var(--accent)}
   @media(max-width:720px){.academic-summary{grid-template-columns:repeat(3,1fr)}.academic-tab{padding:9px 11px}.section-add{flex-wrap:wrap}.section-add input{flex-basis:100%}}
   footer{
@@ -682,6 +682,7 @@ IV. Calidad y modelo de madurez`;
   const syncStatus = document.getElementById('syncStatus');
   const migrationNote = document.getElementById('migrationNote');
   let saveTimer = null;
+  let localSaveInProgress = false;
 
   function scheduleSave(){
     clearTimeout(saveTimer);
@@ -689,7 +690,18 @@ IV. Calidad y modelo de madurez`;
   }
 
   function saveState(){
-    if(docRef) docRef.set(state).catch(e => console.error('Error al guardar en Firebase:', e));
+    if(!docRef) return Promise.resolve();
+    syncStatus.textContent = 'Guardando…';
+    localSaveInProgress = true;
+    return docRef.set(state).then(()=>{
+      syncStatus.textContent = 'Sincronizado con Firebase ✓';
+      syncStatus.classList.add('ok');
+      setTimeout(()=>localSaveInProgress=false,250);
+    }).catch(e=>{
+      console.error('Error al guardar en Firebase:',e);
+      syncStatus.textContent = 'Error al guardar';
+      localSaveInProgress = false;
+    });
   }
 
   function formatDateLong(iso){
@@ -715,6 +727,7 @@ IV. Calidad y modelo de madurez`;
   function getDates(){
     const dates = new Set(Object.keys(state.notesByDate || {}));
     Object.keys(state.todosByDate || {}).forEach(d => dates.add(d));
+    Object.keys(state.studyByDate || {}).forEach(d => dates.add(d));
     dates.add(todayISO());
     dates.add(LEGACY_DATE);
     return [...dates].sort((a,b)=>b.localeCompare(a));
@@ -791,9 +804,33 @@ IV. Calidad y modelo de madurez`;
       }
 
       if(academicTab==='study'){
-        const box=document.createElement('div');box.className='study-box';box.innerHTML='<div class="study-title">Acércate al tema · repasa, profundiza o practica</div>'+(!studies.length?'<div class="study-empty">Todavía no tienes temas de estudio para esta materia.</div>':'')+'<ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><button type="button">＋ Agregar estudio</button></div>';
-        const ul=box.querySelector('ul');studies.forEach((item,idx)=>{const li=document.createElement('li');li.className='study-item';li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><div class="study-main"><strong></strong><small>${item.done?'Completado':'Pendiente de estudio'}</small></div><span class="study-level"></span><button class="study-del" type="button">✕</button>`;li.querySelector('strong').textContent=item.text;li.querySelector('.study-level').textContent=item.level||'Repasar';li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;scheduleSave();renderNotes()});li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
-        const inp=box.querySelector('input'),sel=box.querySelector('select');const add=()=>{const v=inp.value.trim();if(!v)return;studies.push({text:v,level:sel.value,done:false});scheduleSave();renderNotes()};box.querySelector('button').addEventListener('click',add);inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});group.appendChild(box);
+        const box=document.createElement('div');box.className='study-box';
+        box.innerHTML='<div class="study-title">Acércate al tema · repasa, profundiza o practica</div>'+(!studies.length?'<div class="study-empty">Todavía no tienes temas de estudio para esta materia.</div>':'')+
+          '<div class="study-hint">Tip: 30 min es un bloque recomendado; 60 min es una sesión intensiva. El tiempo queda guardado junto con tu tema.</div>'+ 
+          '<ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select class="study-level-select"><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><select class="study-duration-select"><option value="15">15 min · rápido</option><option value="30" selected>30 min · recomendado</option><option value="45">45 min · completo</option><option value="60">60 min · intensivo</option><option value="90">90 min · profundo</option></select><button type="button" class="study-save">＋ Guardar estudio</button></div>';
+        const ul=box.querySelector('ul');
+        studies.forEach((item,idx)=>{
+          const li=document.createElement('li');li.className='study-item';
+          li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><div class="study-main"><strong></strong><small>${item.done?'Completado':'Pendiente de estudio'}</small></div><span class="study-level"></span><span class="study-duration"></span><button class="study-del" type="button">✕</button>`;
+          li.querySelector('strong').textContent=item.text;
+          li.querySelector('.study-level').textContent=item.level||'Repasar';
+          li.querySelector('.study-duration').textContent=(item.duration||30)+' min';
+          li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;saveState();renderNotes()});
+          li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);saveState();renderNotes()});
+          ul.appendChild(li);
+        });
+        const inp=box.querySelector('input'),level=box.querySelector('.study-level-select'),duration=box.querySelector('.study-duration-select');
+        const add=()=>{
+          const v=inp.value.trim(); if(!v)return;
+          ensureDate(selectedDate);
+          studies.push({id:'study_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,level:level.value,duration:Number(duration.value),done:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+          inp.value='';
+          saveState();
+          renderNotes();
+        };
+        box.querySelector('.study-save').addEventListener('click',add);
+        inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});
+        group.appendChild(box);
       }
       container.appendChild(group);
     });
@@ -845,7 +882,7 @@ IV. Calidad y modelo de madurez`;
 
       if(snap.exists){
         const loaded = snap.data();
-        const wasLegacy = loaded?.version !== 2;
+        const wasLegacy = loaded?.version !== 2 && loaded?.version !== 3;
         state = normalizeDatedState(loaded);
          state.version = 3;
         if(wasLegacy){
@@ -865,7 +902,7 @@ IV. Calidad y modelo de madurez`;
       syncStatus.classList.add('ok');
 
       docRef.onSnapshot(snap=>{
-        if(snap.exists){
+        if(snap.exists && !localSaveInProgress){
           state = normalizeDatedState(snap.data());
           renderNotes();
         }
