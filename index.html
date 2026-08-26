@@ -940,14 +940,17 @@ IV. Calidad y modelo de madurez`;
 
       if(academicTab==='todos'){
         const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><select class="pending-priority"><option value="high">🔴 Alta</option><option value="medium" selected>🟡 Media</option><option value="low">⚪ Baja</option></select><button type="button" class="add-pending">＋ Agregar pendiente</button></div>';
-        const ul=box.querySelector('ul'); todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done'); const pr=item.priority||'medium'; li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><span class="todo-priority ${pr}">${pr==='high'?'Alta':pr==='low'?'Baja':'Media'}</span><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{todos.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
+        const ul=box.querySelector('ul'); visibleTodos.forEach((item)=>{const li=document.createElement('li');if(item.done)li.classList.add('done'); const pr=item.priority||'medium'; li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><span class="todo-priority ${pr}">${pr==='high'?'Alta':pr==='low'?'Baja':'Media'}</span><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{{ const source=state.todosByDate[selectedDate]?.[card.key]||[]; state.todosByDate[selectedDate][card.key]=source.filter(t=>t!==item && t.id!==item.id); saveState(); renderNotes(); }});ul.appendChild(li)});
         const inp=box.querySelector('input[type=text]');
         const priority=box.querySelector('.pending-priority');
         const addBtn=box.querySelector('.add-pending');
         const add=async()=>{
           const v=inp.value.trim();
           if(!v || addBtn.disabled)return;
-          todos.push({text:v,done:false,priority:priority.value});
+          ensureDate(selectedDate);
+          if(!state.todosByDate[selectedDate][card.key]) state.todosByDate[selectedDate][card.key]=[];
+          const newTodo={id:'todo_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,done:false,priority:priority.value,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+          state.todosByDate[selectedDate][card.key].push(newTodo);
           inp.value='';
           addBtn.disabled=true;
           addBtn.textContent='Guardando…';
@@ -969,14 +972,14 @@ IV. Calidad y modelo de madurez`;
           '<div class="study-hint">Tip: <b>30 min</b> es el bloque recomendado (25 min de estudio + 5 min de descanso). <b>60 min</b> es una sesión intensiva (25 + 5 + 25 + 5). El tiempo queda guardado junto con tu tema.</div>'+ 
           '<ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select class="study-level-select"><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><select class="study-duration-select"><option value="15">15 min · rápido</option><option value="30" selected>30 min · recomendado</option><option value="45">45 min · completo</option><option value="60">60 min · intensivo</option><option value="90">90 min · profundo</option></select><button type="button" class="study-save">＋ Guardar estudio</button></div>';
         const ul=box.querySelector('ul');
-        studies.forEach((item,idx)=>{
+        studies.forEach((item)=>{
           const li=document.createElement('li');li.className='study-item';
           const status=item.status || (item.done?'completed':'pending'); li.innerHTML=`<div class="study-main"><strong></strong><small>${status==='completed'?'Completado':status==='progress'?'En progreso':'Pendiente de estudio'}</small></div><span class="study-level"></span><span class="study-duration"></span><select class="study-status-select"><option value="pending" ${status==='pending'?'selected':''}>Pendiente</option><option value="progress" ${status==='progress'?'selected':''}>En progreso</option><option value="completed" ${status==='completed'?'selected':''}>Completado</option></select><button class="study-del" type="button">✕</button>`;
           li.querySelector('strong').textContent=item.text;
           li.querySelector('.study-level').textContent=item.level||'Repasar';
           li.querySelector('.study-duration').textContent=(item.duration||30)+' min';
           li.querySelector('.study-status-select').addEventListener('change',e=>{item.status=e.target.value;item.done=e.target.value==='completed';item.updatedAt=new Date().toISOString();saveState();renderNotes()});
-          li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);saveState();renderNotes()});
+          li.querySelector('.study-del').addEventListener('click',()=>{{ const source=state.studyByDate[selectedDate]?.[card.key]||[]; state.studyByDate[selectedDate][card.key]=source.filter(t=>t!==item && t.id!==item.id); saveState(); renderNotes(); }});
           ul.appendChild(li);
         });
         const inp=box.querySelector('input'),level=box.querySelector('.study-level-select'),duration=box.querySelector('.study-duration-select'),saveBtn=box.querySelector('.study-save');
@@ -984,7 +987,8 @@ IV. Calidad y modelo de madurez`;
           const v=inp.value.trim(); if(!v || saveBtn.disabled)return;
           ensureDate(selectedDate);
           const item={id:'study_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,level:level.value,duration:Number(duration.value),done:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
-          studies.push(item);
+          if(!state.studyByDate[selectedDate][card.key]) state.studyByDate[selectedDate][card.key]=[];
+          state.studyByDate[selectedDate][card.key].push(item);
           inp.value='';
           saveBtn.disabled=true;
           saveBtn.textContent='Guardando…';
