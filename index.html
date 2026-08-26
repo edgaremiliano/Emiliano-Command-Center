@@ -228,6 +228,32 @@
 }
 .add-row button:hover{ border-color:var(--accent); color:var(--accent); }
 
+  /* ===== Centro académico: Apuntes / Pendientes / Estudio ===== */
+  .academic-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 18px}
+  .academic-stat{border:1px solid var(--line-soft);padding:12px;background:rgba(255,255,255,.015)}
+  .academic-stat strong{display:block;font:600 18px 'Space Grotesk',sans-serif}
+  .academic-stat span{display:block;margin-top:3px;font:9px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase}
+  .academic-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:18px;overflow:auto}
+  .academic-tab{border:0;border-bottom:2px solid transparent;background:none;color:var(--text-faint);padding:9px 14px;cursor:pointer;font:10px 'IBM Plex Mono',monospace;white-space:nowrap}
+  .academic-tab:hover,.academic-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .study-box{margin:10px 0 20px;padding:12px 14px;border:1px solid var(--line-soft);background:rgba(255,255,255,.012)}
+  .study-title{font:10px 'IBM Plex Mono',monospace;color:var(--text-faint);text-transform:uppercase;margin-bottom:8px}
+  .study-list{list-style:none;margin:0;padding:0}
+  .study-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-top:1px solid var(--line-soft)}
+  .study-item:first-child{border-top:0}
+  .study-item input{margin-top:3px;accent-color:var(--accent)}
+  .study-main{flex:1;min-width:0}
+  .study-main strong{display:block;font-size:12px;font-weight:600}
+  .study-main small{display:block;margin-top:2px;color:var(--text-faint);font-size:10px}
+  .study-level{font:9px 'IBM Plex Mono',monospace;color:var(--accent);white-space:nowrap;padding-top:2px}
+  .study-del{border:0;background:none;color:var(--text-faint);cursor:pointer}
+  .study-del:hover{color:var(--danger)}
+  .section-add{display:flex;gap:8px;margin-top:8px}
+  .section-add input{flex:1;min-width:0;background:transparent;color:var(--text);border:0;border-bottom:1px solid var(--line);padding:7px 2px;font:12px 'Inter',sans-serif}
+  .section-add input:focus{outline:none;border-bottom-color:var(--accent)}
+  .section-add select,.section-add button{border:1px solid var(--line);background:transparent;color:var(--text-dim);padding:7px 9px;font:10px 'IBM Plex Mono',monospace}
+  .section-add button:hover{border-color:var(--accent);color:var(--accent)}
+  @media(max-width:720px){.academic-summary{grid-template-columns:repeat(3,1fr)}.academic-tab{padding:9px 11px}.section-add{flex-wrap:wrap}.section-add input{flex-basis:100%}}
   footer{
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
     font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--text-faint);
@@ -600,7 +626,7 @@ III. Pruebas de software
 IV. Calidad y modelo de madurez`;
 
   function emptyDatedState(){
-    return { version:2, notesByDate:{}, todosByDate:{} };
+    return { version:3, notesByDate:{}, todosByDate:{}, studyByDate:{} };
   }
 
   const LEGACY_DATE = '2026-08-24';
@@ -640,7 +666,11 @@ IV. Calidad y modelo de madurez`;
 
   function normalizeDatedState(raw){
     if(!raw || typeof raw !== 'object') return emptyDatedState();
-    if(raw.version === 2 && raw.notesByDate && raw.todosByDate) return raw;
+    if((raw.version === 2 || raw.version === 3) && raw.notesByDate && raw.todosByDate){
+      if(!raw.studyByDate) raw.studyByDate = {};
+      raw.version = 3;
+      return raw;
+    }
     return legacyToDatedState(raw);
   }
 
@@ -677,6 +707,8 @@ IV. Calidad y modelo de madurez`;
   function ensureDate(date){
     if(!state.notesByDate[date]) state.notesByDate[date] = [];
     if(!state.todosByDate[date]) state.todosByDate[date] = {};
+    if(!state.studyByDate) state.studyByDate = {};
+    if(!state.studyByDate[date]) state.studyByDate[date] = {};
   }
 
   function getDates(){
@@ -700,141 +732,73 @@ IV. Calidad y modelo de madurez`;
     subjectFilter.value = selectedSubject;
   }
 
+  let academicTab = 'notes';
+
   function renderNotes(){
-    ensureDate(selectedDate);
-    populateFilters();
-
+    ensureDate(selectedDate); populateFilters();
     document.getElementById('currentDateLabel').textContent = formatDateLong(selectedDate);
-    const container = document.getElementById('notesBySubject');
-    container.innerHTML = '';
+    const container=document.getElementById('notesBySubject'); container.innerHTML='';
+    const allNotes=state.notesByDate[selectedDate]||[];
+    const allTodos=Object.values(state.todosByDate[selectedDate]||{}).reduce((a,b)=>a+b.length,0);
+    const pending=Object.values(state.todosByDate[selectedDate]||{}).flat().filter(x=>!x.done).length;
+    const study=Object.values(state.studyByDate[selectedDate]||{}).flat();
+    const studyPending=study.filter(x=>!x.done).length;
 
-    const notes = (state.notesByDate[selectedDate] || [])
-      .filter(n => selectedSubject === 'all' || n.subjectKey === selectedSubject);
+    const summary=document.createElement('div'); summary.className='academic-summary';
+    summary.innerHTML=`<div class="academic-stat"><strong>${allNotes.length}</strong><span>Apuntes</span></div><div class="academic-stat"><strong>${pending}</strong><span>Pendientes</span></div><div class="academic-stat"><strong>${studyPending}</strong><span>Estudio</span></div>`;
+    container.appendChild(summary);
 
-    const visibleCards = selectedSubject === 'all'
-      ? ALL_CARDS
-      : ALL_CARDS.filter(c => c.key === selectedSubject);
+    const tabs=document.createElement('div'); tabs.className='academic-tabs';
+    [['notes','📝 Apuntes'],['todos','📌 Pendientes'],['study','🎯 Estudio']].forEach(([key,label])=>{
+      const b=document.createElement('button'); b.className='academic-tab'+(academicTab===key?' active':''); b.textContent=label; b.type='button';
+      b.addEventListener('click',()=>{academicTab=key;renderNotes()}); tabs.appendChild(b);
+    }); container.appendChild(tabs);
 
-    if(!notes.length && visibleCards.every(c => !(state.todosByDate[selectedDate]?.[c.key] || []).length)){
-      container.innerHTML = `<div class="notes-empty">No hay apuntes ni pendientes para esta fecha. Usa <b>+ Nuevo apunte</b> para comenzar.</div>`;
-      return;
-    }
-
+    const visibleCards=selectedSubject==='all'?ALL_CARDS:ALL_CARDS.filter(c=>c.key===selectedSubject);
+    let rendered=false;
     visibleCards.forEach(card=>{
-      const cardNotes = notes.filter(n=>n.subjectKey === card.key);
-      const todos = state.todosByDate[selectedDate]?.[card.key] || [];
-      if(!cardNotes.length && !todos.length) return;
+      const cardNotes=allNotes.filter(n=>n.subjectKey===card.key);
+      const todos=state.todosByDate[selectedDate]?.[card.key]||[];
+      const studies=state.studyByDate[selectedDate]?.[card.key]||[];
+      if(academicTab==='notes'&&!cardNotes.length)return;
+      if(academicTab==='todos'&&!todos.length)return;
+      if(academicTab==='study'&&!studies.length)return;
+      rendered=true;
+      const group=document.createElement('div'); group.className='subject-group';
+      const color=card.color||'var(--school)';
+      group.innerHTML=`<div class="subject-head"><div class="subject-name"><i style="background:${color}"></i>${card.label}</div><div class="subject-count">${academicTab==='notes'?cardNotes.length+' apunte'+(cardNotes.length===1?'':'s'):academicTab==='todos'?todos.length+' pendiente'+(todos.length===1?'':'s'):studies.length+' tema'+(studies.length===1?'':'s')}</div></div>`;
 
-      const group = document.createElement('div');
-      group.className = 'subject-group';
-      const color = card.color || 'var(--school)';
-      group.innerHTML = `
-        <div class="subject-head">
-          <div class="subject-name"><i style="background:${color}"></i>${card.label}</div>
-          <div class="subject-count">${cardNotes.length} apunte${cardNotes.length===1?'':'s'} · ${todos.length} pendiente${todos.length===1?'':'s'}</div>
-        </div>
-      `;
-
-      cardNotes.forEach(note=>{
-        const cardEl = document.createElement('article');
-        cardEl.className = 'note-card';
-        cardEl.dataset.id = note.id;
-        cardEl.innerHTML = `
-          <div class="note-card-head">
-            <div class="note-meta">APUNTE · <span class="updated"></span></div>
-            <div class="note-actions">
-              <button type="button" class="delete">Eliminar</button>
-            </div>
-          </div>
-          <div class="note-editor">
-            <input class="note-title" type="text" value="">
-            <textarea class="note-content" placeholder="Escribe aquí el apunte..."></textarea>
-          </div>
-        `;
-        cardEl.querySelector('.note-title').value = note.title || '';
-        cardEl.querySelector('.note-content').value = note.content || '';
-        cardEl.querySelector('.updated').textContent =
-          'actualizado ' + new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt || note.createdAt || Date.now()));
-
-        const update = (field, value)=>{
-          note[field] = value;
-          note.updatedAt = new Date().toISOString();
-          cardEl.querySelector('.updated').textContent =
-            'actualizado ' + new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt));
-          scheduleSave();
-        };
-        cardEl.querySelector('.note-title').addEventListener('input', e=>update('title', e.target.value));
-        cardEl.querySelector('.note-content').addEventListener('input', e=>update('content', e.target.value));
-        cardEl.querySelector('.delete').addEventListener('click', ()=>{
-          if(!confirm('¿Eliminar este apunte?')) return;
-          state.notesByDate[selectedDate] = state.notesByDate[selectedDate].filter(n=>n.id !== note.id);
-          scheduleSave();
-          renderNotes();
+      if(academicTab==='notes'){
+        cardNotes.forEach(note=>{
+          const el=document.createElement('article'); el.className='note-card'; el.dataset.id=note.id;
+          el.innerHTML=`<div class="note-card-head"><div class="note-meta">APUNTE · <span class="updated"></span></div><div class="note-actions"><button type="button" class="delete">Eliminar</button></div></div><div class="note-editor"><input class="note-title" type="text"><textarea class="note-content" placeholder="Escribe aquí el apunte..."></textarea></div>`;
+          el.querySelector('.note-title').value=note.title||''; el.querySelector('.note-content').value=note.content||'';
+          const stamp=()=>el.querySelector('.updated').textContent='actualizado '+new Intl.DateTimeFormat('es-MX',{dateStyle:'short',timeStyle:'short'}).format(new Date(note.updatedAt||note.createdAt||Date.now())); stamp();
+          const update=(f,v)=>{note[f]=v;note.updatedAt=new Date().toISOString();stamp();scheduleSave()};
+          el.querySelector('.note-title').addEventListener('input',e=>update('title',e.target.value)); el.querySelector('.note-content').addEventListener('input',e=>update('content',e.target.value));
+          el.querySelector('.delete').addEventListener('click',()=>{if(!confirm('¿Eliminar este apunte?'))return;state.notesByDate[selectedDate]=state.notesByDate[selectedDate].filter(n=>n.id!==note.id);scheduleSave();renderNotes()});
+          group.appendChild(el);
         });
-        group.appendChild(cardEl);
-      });
-
-      if(todos.length){
-        const todoBox = document.createElement('div');
-        todoBox.className = 'todo-box';
-        todoBox.innerHTML = `<div class="todo-title">Pendientes de ${formatDateLong(selectedDate)}</div><ul class="todo-list"></ul>
-          <div class="add-row"><input type="text" placeholder="Agregar pendiente…"><button type="button">Agregar</button></div>`;
-        const ul = todoBox.querySelector('.todo-list');
-        todos.forEach((item, idx)=>{
-          const li = document.createElement('li');
-          if(item.done) li.classList.add('done');
-          li.innerHTML = `<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button" title="Eliminar">✕</button>`;
-          li.querySelector('label').textContent = item.text;
-          li.querySelector('input').addEventListener('change', e=>{
-            item.done = e.target.checked;
-            li.classList.toggle('done', item.done);
-            scheduleSave();
-          });
-          li.querySelector('.del').addEventListener('click', ()=>{
-            todos.splice(idx,1);
-            scheduleSave();
-            renderNotes();
-          });
-          ul.appendChild(li);
-        });
-        const input = todoBox.querySelector('input[type=text]');
-        const add = ()=>{
-          const val = input.value.trim();
-          if(!val) return;
-          todos.push({text:val,done:false});
-          scheduleSave();
-          renderNotes();
-        };
-        todoBox.querySelector('button').addEventListener('click', add);
-        input.addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
-        group.appendChild(todoBox);
+        const add=document.createElement('div');add.className='add-note';add.innerHTML=`<button type="button">+ Agregar apunte a ${card.label}</button>`;add.querySelector('button').addEventListener('click',()=>addNote(card.key));group.appendChild(add);
       }
 
-      const add = document.createElement('div');
-      add.className = 'add-note';
-      add.innerHTML = `<button type="button">+ Agregar apunte a ${card.label}</button>`;
-      add.querySelector('button').addEventListener('click', ()=>addNote(card.key));
-      group.appendChild(add);
+      if(academicTab==='todos'){
+        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><button type="button">Agregar</button></div>';
+        const ul=box.querySelector('ul'); todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done');li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{todos.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
+        const inp=box.querySelector('input[type=text]');const add=()=>{const v=inp.value.trim();if(!v)return;todos.push({text:v,done:false});scheduleSave();renderNotes()};box.querySelector('button').addEventListener('click',add);inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});group.appendChild(box);
+      }
+
+      if(academicTab==='study'){
+        const box=document.createElement('div');box.className='study-box';box.innerHTML='<div class="study-title">Acércate al tema · repasa, profundiza o practica</div><ul class="study-list"></ul><div class="section-add"><input type="text" placeholder="Tema que quieres estudiar…"><select><option>Repasar</option><option>Profundizar</option><option>Practicar</option><option>Reforzar</option></select><button type="button">Agregar</button></div>';
+        const ul=box.querySelector('ul');studies.forEach((item,idx)=>{const li=document.createElement('li');li.className='study-item';li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><div class="study-main"><strong></strong><small>${item.done?'Completado':'Pendiente de estudio'}</small></div><span class="study-level"></span><button class="study-del" type="button">✕</button>`;li.querySelector('strong').textContent=item.text;li.querySelector('.study-level').textContent=item.level||'Repasar';li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;scheduleSave();renderNotes()});li.querySelector('.study-del').addEventListener('click',()=>{studies.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
+        const inp=box.querySelector('input'),sel=box.querySelector('select');const add=()=>{const v=inp.value.trim();if(!v)return;studies.push({text:v,level:sel.value,done:false});scheduleSave();renderNotes()};box.querySelector('button').addEventListener('click',add);inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});group.appendChild(box);
+      }
       container.appendChild(group);
     });
-
-    if(!container.children.length){
-      container.innerHTML = `<div class="notes-empty">No hay contenido para esta materia en esta fecha.</div>`;
-    }
+    if(!rendered){const empty=document.createElement('div');empty.className='notes-empty';empty.innerHTML=academicTab==='notes'?'No hay apuntes para esta fecha.':academicTab==='todos'?'No hay pendientes para esta fecha.':'No hay temas de estudio para esta fecha. Agrega uno a la materia que quieras reforzar.';container.appendChild(empty)}
   }
 
-  function addNote(subjectKey){
-    ensureDate(selectedDate);
-    const note = makeNote('Nuevo apunte', '', subjectKey, selectedDate);
-    state.notesByDate[selectedDate].push(note);
-    selectedSubject = subjectKey;
-    scheduleSave();
-    renderNotes();
-    requestAnimationFrame(()=>{
-      const el = document.querySelector(`[data-id="${note.id}"] .note-title`);
-      if(el){ el.focus(); el.select(); }
-    });
-  }
+  function addNote(subjectKey){ensureDate(selectedDate);const note=makeNote('Nuevo apunte','',subjectKey,selectedDate);state.notesByDate[selectedDate].push(note);selectedSubject=subjectKey;scheduleSave();renderNotes();requestAnimationFrame(()=>{const el=document.querySelector(`[data-id="${note.id}"] .note-title`);if(el){el.focus();el.select()}})}
 
   document.getElementById('prevDate').addEventListener('click', ()=>{
     selectedDate = dateShift(selectedDate,-1);
@@ -881,6 +845,7 @@ IV. Calidad y modelo de madurez`;
         const loaded = snap.data();
         const wasLegacy = loaded?.version !== 2;
         state = normalizeDatedState(loaded);
+         state.version = 3;
         if(wasLegacy){
           await docRef.set(state);
           migrationNote.textContent = 'Los apuntes existentes fueron reorganizados automáticamente en el 24 de agosto de 2026 y ahora se guardan por fecha y materia.';
