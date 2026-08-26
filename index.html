@@ -863,9 +863,27 @@ IV. Calidad y modelo de madurez`;
       }
 
       if(academicTab==='todos'){
-        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><button type="button">＋ Agregar pendiente</button></div>';
+        const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><button type="button" class="add-pending">＋ Agregar pendiente</button></div>';
         const ul=box.querySelector('ul'); todos.forEach((item,idx)=>{const li=document.createElement('li');if(item.done)li.classList.add('done');li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{todos.splice(idx,1);scheduleSave();renderNotes()});ul.appendChild(li)});
-        const inp=box.querySelector('input[type=text]');const add=()=>{const v=inp.value.trim();if(!v)return;todos.push({text:v,done:false});scheduleSave();renderNotes()};box.querySelector('button').addEventListener('click',add);inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});group.appendChild(box);
+        const inp=box.querySelector('input[type=text]');
+        const addBtn=box.querySelector('.add-pending');
+        const add=async()=>{
+          const v=inp.value.trim();
+          if(!v || addBtn.disabled)return;
+          todos.push({text:v,done:false});
+          inp.value='';
+          addBtn.disabled=true;
+          addBtn.textContent='Guardando…';
+          syncStatus.textContent='Guardando pendiente…';
+          renderNotes();
+          const ok=await saveState();
+          renderNotes();
+          if(ok){ syncStatus.textContent='Sincronizado con Firebase ✓'; syncStatus.classList.add('ok'); }
+          else { syncStatus.textContent='Error al guardar · Reintentar'; syncStatus.classList.remove('ok'); }
+        };
+        addBtn.addEventListener('click',add);
+        inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});
+        group.appendChild(box);
       }
 
       if(academicTab==='study'){
