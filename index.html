@@ -128,6 +128,41 @@
   .block .r{ font-size:9.5px; color: var(--text-faint); margin-top:2px; }
   .block.type-free .n{ color: var(--text-dim); font-weight:500; }
 
+/* ---------------- Work tracker ---------------- */
+.work-section{margin-top:22px}
+.work-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.work-kicker{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--work);margin-bottom:5px}
+.work-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600}
+.work-copy{font-size:11px;color:var(--text-faint);margin-top:4px;line-height:1.45}
+.work-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.work-stat{border:1px solid var(--line-soft);padding:12px;background:rgba(255,255,255,.018)}
+.work-stat .value{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600}
+.work-stat .label{margin-top:3px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-faint);text-transform:uppercase}
+.work-stat.money .value{color:var(--work)}
+.work-panel{border:1px solid var(--line-soft);padding:14px;background:rgba(255,255,255,.012);margin-bottom:12px}
+.work-panel-title{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);text-transform:uppercase;margin-bottom:9px}
+.work-form{display:grid;grid-template-columns:1.05fr .8fr .8fr .7fr auto;gap:8px;align-items:end}
+.work-field{display:grid;gap:5px}
+.work-field label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-faint);text-transform:uppercase}
+.work-field input,.work-field select{box-sizing:border-box;width:100%;padding:8px 9px;color:var(--text);background:rgba(255,255,255,.025);border:1px solid var(--line-soft);font:12px 'Inter',sans-serif}
+.work-field input:focus,.work-field select:focus{outline:none;border-color:var(--work)}
+.work-form button,.work-settings button{padding:8px 11px;border:1px solid var(--work);background:transparent;color:var(--work);font:10px 'IBM Plex Mono',monospace;cursor:pointer;white-space:nowrap}
+.work-form button:hover,.work-settings button:hover{background:rgba(201,122,67,.08)}
+.work-settings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end}
+.work-settings .setting-help{grid-column:1/-1;color:var(--text-faint);font-size:10px;line-height:1.4}
+.work-log{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line-soft)}
+.work-log:first-child{border-top:0}
+.work-log-main strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:12px}
+.work-log-main small{display:block;margin-top:3px;color:var(--text-faint);font-size:10px}
+.work-log-hours{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);white-space:nowrap}
+.work-log-pay{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--work);white-space:nowrap}
+.work-log-del{border:1px solid var(--line-soft);background:transparent;color:var(--text-faint);padding:5px 8px;cursor:pointer}
+.work-log-del:hover{border-color:var(--danger);color:var(--danger)}
+.work-empty{padding:15px 0;color:var(--text-faint);font-size:11px}
+.work-note{padding:9px 11px;border-left:2px solid var(--work);background:rgba(201,122,67,.05);color:var(--text-dim);font-size:10px;line-height:1.45;margin-top:10px}
+@media(max-width:850px){.work-cards{grid-template-columns:repeat(2,1fr)}.work-form{grid-template-columns:1fr 1fr}.work-form button{width:100%}.work-settings{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.work-cards{grid-template-columns:repeat(2,1fr)}.work-log{grid-template-columns:1fr auto;gap:7px}.work-log-pay{grid-column:2;grid-row:1}.work-log-del{grid-column:2;grid-row:2}.work-log-hours{grid-column:1;grid-row:2}.work-settings,.work-form{grid-template-columns:1fr}.work-settings .setting-help{grid-column:auto}}
+
 /* ---------------- Notes ---------------- */
 .notes-toolbar{
   display:flex; align-items:center; justify-content:space-between; gap:14px;
@@ -353,6 +388,44 @@
   </section>
 
   <section class="today-panel" id="todayPanel"></section>
+
+
+  <section class="section work-section">
+    <div class="work-head">
+      <div>
+        <div class="work-kicker">Control de horas</div>
+        <div class="work-title">Trabajo · Cinemex</div>
+        <div class="work-copy">Registra entrada y salida para saber exactamente cuántas horas trabajaste y cuánto llevas generado.</div>
+      </div>
+    </div>
+    <div class="work-cards" id="workCards"></div>
+    <div class="work-panel">
+      <div class="work-panel-title">Registrar turno</div>
+      <div class="work-form">
+        <div class="work-field"><label>Fecha</label><input id="workDate" type="date"></div>
+        <div class="work-field"><label>Entrada</label><input id="workStart" type="time" value="17:00"></div>
+        <div class="work-field"><label>Salida</label><input id="workEnd" type="time" value="22:00"></div>
+        <div class="work-field"><label>Descanso (min)</label><input id="workBreak" type="number" min="0" step="5" value="0"></div>
+        <button id="addWorkLog" type="button">＋ Guardar turno</button>
+      </div>
+      <div class="work-note">Tip: si saliste a las 22:35, registra 22:35. La aplicación calculará automáticamente las horas reales y el pago correspondiente.</div>
+    </div>
+    <div class="work-panel">
+      <div class="work-panel-title">Configuración de pago</div>
+      <div class="work-settings">
+        <div class="work-field"><label>Sueldo por hora</label><input id="hourlyRate" type="number" min="0" step="0.01"></div>
+        <div class="work-field"><label>Horas ya acumuladas</label><input id="startingHours" type="number" min="0" step="0.25"></div>
+        <div class="work-field"><label>Acumuladas al día</label><input id="startingDate" type="date"></div>
+        <div class="work-field"><label>Próximo jueves de pago</label><input id="nextPayday" type="date"></div>
+        <button id="saveWorkSettings" type="button">Guardar configuración</button>
+        <div class="setting-help">Tu ciclo es cada dos jueves. Para no inventar una fecha de pago, configura aquí cuál es tu próximo jueves de pago; a partir de ahí la app podrá identificar cada ciclo de 14 días.</div>
+      </div>
+    </div>
+    <div class="work-panel">
+      <div class="work-panel-title">Turnos registrados</div>
+      <div id="workLogs"></div>
+    </div>
+  </section>
 
   <section class="section">
     <div class="section-top">
@@ -671,7 +744,7 @@ III. Pruebas de software
 IV. Calidad y modelo de madurez`;
 
   function emptyDatedState(){
-    return { version:3, notesByDate:{}, todosByDate:{}, studyByDate:{} };
+    return { version:4, notesByDate:{}, todosByDate:{}, studyByDate:{}, workByDate:{}, workSettings:{hourlyRate:40, startingHours:50, startingDate:'2026-09-01', nextPayday:''} };
   }
 
   const LEGACY_DATE = '2026-08-24';
@@ -711,9 +784,15 @@ IV. Calidad y modelo de madurez`;
 
   function normalizeDatedState(raw){
     if(!raw || typeof raw !== 'object') return emptyDatedState();
-    if((raw.version === 2 || raw.version === 3) && raw.notesByDate && raw.todosByDate){
+    if((raw.version === 2 || raw.version === 3 || raw.version === 4) && raw.notesByDate && raw.todosByDate){
       if(!raw.studyByDate) raw.studyByDate = {};
-      raw.version = 3;
+      if(!raw.workByDate) raw.workByDate = {};
+      if(!raw.workSettings) raw.workSettings = {hourlyRate:40, startingHours:50, startingDate:'2026-09-01', nextPayday:''};
+      if(raw.workSettings.hourlyRate == null) raw.workSettings.hourlyRate = 40;
+      if(raw.workSettings.startingHours == null) raw.workSettings.startingHours = 50;
+      if(!raw.workSettings.startingDate) raw.workSettings.startingDate = '2026-09-01';
+      if(raw.workSettings.nextPayday == null) raw.workSettings.nextPayday = '';
+      raw.version = 4;
       return raw;
     }
     return legacyToDatedState(raw);
@@ -780,6 +859,8 @@ IV. Calidad y modelo de madurez`;
     if(!state.todosByDate[date]) state.todosByDate[date] = {};
     if(!state.studyByDate) state.studyByDate = {};
     if(!state.studyByDate[date]) state.studyByDate[date] = {};
+    if(!state.workByDate) state.workByDate = {};
+    if(!state.workByDate[date]) state.workByDate[date] = [];
   }
 
   function getDates(){
@@ -809,6 +890,91 @@ IV. Calidad y modelo de madurez`;
 
   function escapeHtml(value){
     return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+
+
+  function workHoursBetween(start,end,breakMinutes=0){
+    if(!start || !end) return 0;
+    let mins=toMin(end)-toMin(start);
+    if(mins<0) mins += 24*60;
+    mins=Math.max(0,mins-(Number(breakMinutes)||0));
+    return mins/60;
+  }
+  function money(n){return '$'+Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})+' MXN'}
+  function workAllLogs(){
+    return Object.entries(state.workByDate||{}).flatMap(([date,logs])=>(logs||[]).map(x=>({...x,date:x.date||date}))).sort((a,b)=>String(b.date).localeCompare(String(a.date)) || String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  }
+  function renderWork(){
+    if(!state.workSettings) state.workSettings={hourlyRate:40,startingHours:50,startingDate:'2026-09-01',nextPayday:''};
+    if(!state.workByDate) state.workByDate={};
+    const rate=Number(state.workSettings.hourlyRate)||40;
+    const baseHours=Number(state.workSettings.startingHours)||0;
+    const logs=workAllLogs();
+    const loggedHours=logs.reduce((sum,x)=>sum+Number(x.hours||0),0);
+    const totalHours=baseHours+loggedHours;
+    const basePay=baseHours*rate, loggedPay=loggedHours*rate, totalPay=totalHours*rate;
+    const cards=document.getElementById('workCards');
+    if(!cards)return;
+    cards.innerHTML=`
+      <div class="work-stat"><div class="value">${totalHours.toFixed(2)} h</div><div class="label">Horas acumuladas</div></div>
+      <div class="work-stat money"><div class="value">${money(totalPay)}</div><div class="label">Sueldo estimado</div></div>
+      <div class="work-stat"><div class="value">${loggedHours.toFixed(2)} h</div><div class="label">Horas registradas aquí</div></div>
+      <div class="work-stat money"><div class="value">${money(loggedPay)}</div><div class="label">Generado por turnos registrados</div></div>`;
+    document.getElementById('workDate').value = document.getElementById('workDate').value || selectedDate || todayISO();
+    document.getElementById('hourlyRate').value=rate;
+    document.getElementById('startingHours').value=baseHours;
+    document.getElementById('startingDate').value=state.workSettings.startingDate||'2026-09-01';
+    document.getElementById('nextPayday').value=state.workSettings.nextPayday||'';
+    const logsEl=document.getElementById('workLogs');
+    if(!logs.length){logsEl.innerHTML='<div class="work-empty">Todavía no tienes turnos registrados. Agrega tu primer turno arriba.</div>';return;}
+    logsEl.innerHTML=logs.map(x=>`<div class="work-log" data-work-id="${x.id}">
+      <div class="work-log-main"><strong>${formatDateLong(x.date)}</strong><small>${x.start} → ${x.end}${Number(x.breakMinutes||0)?` · descanso ${x.breakMinutes} min`:''}</small></div>
+      <div class="work-log-hours">${Number(x.hours||0).toFixed(2)} h</div>
+      <div class="work-log-pay">${money(Number(x.hours||0)*rate)}</div>
+      <button class="work-log-del" type="button">✕</button>
+    </div>`).join('');
+    logsEl.querySelectorAll('.work-log-del').forEach(btn=>btn.addEventListener('click',async()=>{
+      const row=btn.closest('.work-log'); const id=row.dataset.workId;
+      if(!confirm('¿Eliminar este turno?'))return;
+      for(const date of Object.keys(state.workByDate||{})){
+        state.workByDate[date]=(state.workByDate[date]||[]).filter(x=>x.id!==id);
+      }
+      syncStatus.textContent='Guardando cambio…';
+      const ok=await saveState();
+      renderWork();
+      syncStatus.textContent=ok?'Sincronizado con Firebase ✓':'Error al guardar · Reintentar';
+    }));
+  }
+
+  async function addWorkLog(){
+    const date=document.getElementById('workDate').value||todayISO();
+    const start=document.getElementById('workStart').value;
+    const end=document.getElementById('workEnd').value;
+    const breakMinutes=Math.max(0,Number(document.getElementById('workBreak').value)||0);
+    const hours=workHoursBetween(start,end,breakMinutes);
+    const btn=document.getElementById('addWorkLog');
+    if(!start||!end||hours<=0){alert('Agrega una hora de entrada y salida válidas.');return;}
+    ensureDate(date);
+    const item={id:'work_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),date,start,end,breakMinutes,hours,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+    state.workByDate[date].push(item);
+    btn.disabled=true;btn.textContent='Guardando…';syncStatus.textContent='Guardando turno…';
+    renderWork();
+    const ok=await saveState();
+    btn.disabled=false;btn.textContent='＋ Guardar turno';
+    syncStatus.textContent=ok?'Sincronizado con Firebase ✓':'Error al guardar · Reintentar';
+  }
+
+  async function saveWorkSettings(){
+    state.workSettings={
+      hourlyRate:Math.max(0,Number(document.getElementById('hourlyRate').value)||0),
+      startingHours:Math.max(0,Number(document.getElementById('startingHours').value)||0),
+      startingDate:document.getElementById('startingDate').value||'2026-09-01',
+      nextPayday:document.getElementById('nextPayday').value||''
+    };
+    syncStatus.textContent='Guardando configuración…';
+    const ok=await saveState();
+    renderWork();
+    syncStatus.textContent=ok?'Sincronizado con Firebase ✓':'Error al guardar · Reintentar';
   }
 
   function renderTodayPanel(){
@@ -940,7 +1106,7 @@ IV. Calidad y modelo de madurez`;
 
       if(academicTab==='todos'){
         const box=document.createElement('div');box.className='todo-box';box.innerHTML='<div class="todo-title">Tareas que te dejaron</div><ul class="todo-list"></ul><div class="add-row"><input type="text" placeholder="¿Qué te dejaron?…"><select class="pending-priority"><option value="high">🔴 Alta</option><option value="medium" selected>🟡 Media</option><option value="low">⚪ Baja</option></select><button type="button" class="add-pending">＋ Agregar pendiente</button></div>';
-        const ul=box.querySelector('ul'); visibleTodos.forEach((item)=>{const li=document.createElement('li');if(item.done)li.classList.add('done'); const pr=item.priority||'medium'; li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><span class="todo-priority ${pr}">${pr==='high'?'Alta':pr==='low'?'Baja':'Media'}</span><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',e=>{item.done=e.target.checked;li.classList.toggle('done',item.done);scheduleSave();renderNotes()});li.querySelector('.del').addEventListener('click',()=>{{ const source=state.todosByDate[selectedDate]?.[card.key]||[]; state.todosByDate[selectedDate][card.key]=source.filter(t=>t!==item && t.id!==item.id); saveState(); renderNotes(); }});ul.appendChild(li)});
+        const ul=box.querySelector('ul'); todos.forEach((item)=>{const li=document.createElement('li');if(item.done)li.classList.add('done'); const pr=item.priority||'medium'; li.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><label></label><span class="todo-priority ${pr}">${pr==='high'?'Alta':pr==='low'?'Baja':'Media'}</span><button class="del" type="button">✕</button>`;li.querySelector('label').textContent=item.text;li.querySelector('input').addEventListener('change',async e=>{item.done=e.target.checked;item.updatedAt=new Date().toISOString();syncStatus.textContent='Guardando cambio…';const ok=await saveState();if(ok){syncStatus.textContent='Sincronizado con Firebase ✓';syncStatus.classList.add('ok');}renderNotes()});li.querySelector('.del').addEventListener('click',async()=>{if(!confirm('¿Eliminar este pendiente?'))return; const source=state.todosByDate[selectedDate]?.[card.key]||[]; const index=source.indexOf(item); state.todosByDate[selectedDate][card.key]=source.filter(t=>t!==item && t.id!==item.id); syncStatus.textContent='Eliminando pendiente…'; const ok=await saveState(); if(ok){syncStatus.textContent='Sincronizado con Firebase ✓';syncStatus.classList.add('ok');renderNotes();}else{state.todosByDate[selectedDate][card.key]=source;syncStatus.textContent='No se pudo eliminar · Reintentar';syncStatus.classList.remove('ok');renderNotes();}});ul.appendChild(li)});
         const inp=box.querySelector('input[type=text]');
         const priority=box.querySelector('.pending-priority');
         const addBtn=box.querySelector('.add-pending');
@@ -951,15 +1117,31 @@ IV. Calidad y modelo de madurez`;
           if(!state.todosByDate[selectedDate][card.key]) state.todosByDate[selectedDate][card.key]=[];
           const newTodo={id:'todo_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),text:v,done:false,priority:priority.value,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
           state.todosByDate[selectedDate][card.key].push(newTodo);
-          inp.value='';
           addBtn.disabled=true;
           addBtn.textContent='Guardando…';
+          inp.disabled=true;
+          priority.disabled=true;
           syncStatus.textContent='Guardando pendiente…';
-          renderNotes();
+          syncStatus.classList.remove('ok');
+          // No re-render aquí: conservar el botón actual permite mostrar el estado real del guardado.
           const ok=await saveState();
-          renderNotes();
-          if(ok){ syncStatus.textContent='Sincronizado con Firebase ✓'; syncStatus.classList.add('ok'); }
-          else { syncStatus.textContent='Error al guardar · Reintentar'; syncStatus.classList.remove('ok'); }
+          if(ok){
+            inp.value='';
+            syncStatus.textContent='Sincronizado con Firebase ✓';
+            syncStatus.classList.add('ok');
+            renderNotes();
+          }else{
+            // Si falla, quitamos solamente el elemento recién creado para no mostrar datos que no llegaron a Firebase.
+            const source=state.todosByDate[selectedDate]?.[card.key]||[];
+            state.todosByDate[selectedDate][card.key]=source.filter(t=>t.id!==newTodo.id);
+            addBtn.disabled=false;
+            addBtn.textContent='＋ Agregar pendiente';
+            inp.disabled=false;
+            priority.disabled=false;
+            syncStatus.textContent='Error al guardar · Intenta de nuevo';
+            syncStatus.classList.remove('ok');
+            renderNotes();
+          }
         };
         addBtn.addEventListener('click',add);
         inp.addEventListener('keydown',e=>{if(e.key==='Enter')add()});
@@ -979,7 +1161,7 @@ IV. Calidad y modelo de madurez`;
           li.querySelector('.study-level').textContent=item.level||'Repasar';
           li.querySelector('.study-duration').textContent=(item.duration||30)+' min';
           li.querySelector('.study-status-select').addEventListener('change',e=>{item.status=e.target.value;item.done=e.target.value==='completed';item.updatedAt=new Date().toISOString();saveState();renderNotes()});
-          li.querySelector('.study-del').addEventListener('click',()=>{{ const source=state.studyByDate[selectedDate]?.[card.key]||[]; state.studyByDate[selectedDate][card.key]=source.filter(t=>t!==item && t.id!==item.id); saveState(); renderNotes(); }});
+          li.querySelector('.study-del').addEventListener('click',()=>{{ const source=state.studyByDate[selectedDate]?.[card.key]||[]; state.studyByDate[selectedDate][card.key]=source.filter(t=>t!==item && t.id!==item.id); syncStatus.textContent='Guardando cambio…'; saveState().then(ok=>{ syncStatus.textContent=ok?'Sincronizado con Firebase ✓':'Error al guardar · Reintentar'; renderNotes(); }); }});
           ul.appendChild(li);
         });
         const inp=box.querySelector('input'),level=box.querySelector('.study-level-select'),duration=box.querySelector('.study-duration-select'),saveBtn=box.querySelector('.study-save');
@@ -1042,10 +1224,15 @@ IV. Calidad y modelo de madurez`;
     addNote(key);
   });
 
+  document.getElementById('addWorkLog').addEventListener('click',addWorkLog);
+  document.getElementById('saveWorkSettings').addEventListener('click',saveWorkSettings);
+  renderWork();
+
   async function initSync(){
     if(!isConfigured){
       document.getElementById('configBanner').classList.add('show');
       syncStatus.textContent = 'Sin sincronizar (solo este navegador)';
+      renderWork();
       renderNotes();
       return;
     }
@@ -1058,12 +1245,12 @@ IV. Calidad y modelo de madurez`;
 
       if(snap.exists){
         const loaded = snap.data();
-        const wasLegacy = loaded?.version !== 2 && loaded?.version !== 3;
+        const wasLegacy = loaded?.version !== 2 && loaded?.version !== 3 && loaded?.version !== 4;
         state = normalizeDatedState(loaded);
-         state.version = 3;
+         state.version = 4;
         if(wasLegacy){
           await docRef.set(state);
-          migrationNote.textContent = 'Los apuntes existentes fueron reorganizados automáticamente en el 24 de agosto de 2026 y ahora se guardan por fecha y materia.';
+          migrationNote.textContent = 'Los apuntes existentes fueron reorganizados automáticamente y ahora se guardan por fecha y materia. El control de trabajo también está listo para registrar turnos y sueldo.';
           migrationNote.classList.add('show');
         }
       }else{
@@ -1073,6 +1260,7 @@ IV. Calidad y modelo de madurez`;
         migrationNote.classList.add('show');
       }
 
+      renderWork();
       renderNotes();
       syncStatus.textContent = 'Sincronizado con Firebase ✓';
       syncStatus.classList.add('ok');
@@ -1082,6 +1270,7 @@ IV. Calidad y modelo de madurez`;
         // Never overwrite the local state during that window.
         if(snap.exists && !localSaveInProgress){
           state = normalizeDatedState(snap.data());
+          renderWork();
           renderNotes();
         }
       });
